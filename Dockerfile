@@ -4,17 +4,17 @@ FROM node:18-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package.json package-lock.json ./
+# Copy package.json and yarn.lock
+COPY package.json ./
 
-# Install dependencies
-RUN npm cache clean --force && npm install
+# Install dependencies using yarn
+RUN yarn install
 
 # Copy the rest of the application code
 COPY . .
 
 # Build the Next.js application
-RUN npm run build
+RUN yarn build
 
 # Stage 2: Run the application
 FROM node:18-alpine
@@ -23,7 +23,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy only the necessary files from the build stage
-COPY --from=builder /app/package.json /app/package-lock.json /app/next.config.js ./
+COPY --from=builder /app/package.json /app/yarn.lock /app/next.config.js ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
@@ -32,4 +32,4 @@ COPY --from=builder /app/node_modules ./node_modules
 EXPOSE 3000
 
 # Command to run the application
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
