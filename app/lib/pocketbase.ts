@@ -1,6 +1,6 @@
 "use server";
 
-import PocketBase, { ClientResponseError } from "pocketbase";
+import PocketBase from "pocketbase";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
