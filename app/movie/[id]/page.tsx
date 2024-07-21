@@ -22,7 +22,7 @@ export default async function Movie({
       />
       <div className="flex w-full items-end bg-contain p-2" style={{backgroundImage: `url(${tmdb.image.getPosterUrlFromPath(movie.backdrop_path, PosterSize.ORIGINAL)})`}}>
         <div className="absolute inset-0 bg-black opacity-50" />
-        <MediaHeader backdropPath={movie.backdrop_path} title={movie.title} />
+        <MediaHeader title={movie.title} />
       </div>
     </div>
   );
