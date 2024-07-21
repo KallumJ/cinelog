@@ -6,6 +6,7 @@ import '@fontsource/roboto/700.css';
 
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
+import { cookies } from "next/headers";
 
 import { Providers } from "./providers";
 
@@ -47,6 +48,7 @@ export default function RootLayout({
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
+              {cookies().get("pb_auth") ? <p>Logged in</p> : <p>Not logged in</p>}
               {children}
             </main>
           </div>
