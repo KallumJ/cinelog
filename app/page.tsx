@@ -1,32 +1,30 @@
-import { PosterSize } from "tmdb-ts";
+import { unstable_noStore as noStore } from 'next/cache';
 
 import { tmdb } from "./lib/tmdb";
 
-import MediaTile from "@/components/MovieTile";
-import MediaCarousel from "@/components/MediaCarousel";
+import MediaCarouselTile from "@/components/MediaCarousel/MediaCarouselTile";
+import MediaCarousel from "@/components/MediaCarousel/MediaCarousel";
+
 
 export default async function Home() {
+  noStore();
   const popularMovies = await tmdb.movies.popular();
   const popularShows = await tmdb.tvShows.popular();
 
   const movieTiles = popularMovies.results.map((m) => (
-    <MediaTile
+    <MediaCarouselTile
       key={m.id}
-      posterSrc={tmdb.image.getPosterUrlFromPath(
-        m.poster_path,
-        PosterSize.W780
-      )}
+      href={`/movie/${m.id}`}
+      posterPath={m.poster_path}
       title={m.title}
     />
   ));
 
   const showTiles = popularShows.results.map((s) => (
-    <MediaTile
+    <MediaCarouselTile
       key={s.id}
-      posterSrc={tmdb.image.getPosterUrlFromPath(
-        s.poster_path,
-        PosterSize.W780
-      )}
+      href={`/show/${s.id}`}
+      posterPath={s.poster_path}
       title={s.name}
     />
   ));
