@@ -27,7 +27,7 @@ export default function Poster({ title, posterPath,  className}: PosterProps) {
             alt={title}
             className="select-none w-full h-full object-cover"
             draggable={false}
-            src={tmdb.image.getPosterUrlFromPath(posterPath, PosterSize.W780)}
+            src={tmdb.image.getSrcForPath(posterPath, PosterSize.W780)}
           />
         ) : (
           <p className="m-4">Oops... We couldn&apos;t find a poster!</p>
