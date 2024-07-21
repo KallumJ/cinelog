@@ -3,6 +3,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import 'react-multi-carousel/lib/styles.css';
 
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
