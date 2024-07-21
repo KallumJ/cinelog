@@ -18,7 +18,7 @@ export default function MediaCarouselTile({
 }: MediaTileProps) {
   return (
     <Link href={href}>
-      <Poster posterPath={posterSrc} title={title} width={185} />
+      <Poster className="sm:w-48 sm:h-72 w-40 h-60" posterPath={posterSrc} title={title} />
     </Link>
   );
 }

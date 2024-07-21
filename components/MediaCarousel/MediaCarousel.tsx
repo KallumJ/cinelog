@@ -16,17 +16,22 @@ export default function MediaCarousel({ mediaTiles }: MediaCarouselProps) {
       slidesToSlide: 3
     },
     desktop: {
-      breakpoint: { max: 3000, min: 1024 },
+      breakpoint: { max: 3000, min: 1200 },
       items: 6,
       slidesToSlide: 3
     },
     tablet: {
-      breakpoint: { max: 1024, min: 464 },
+      breakpoint: { max: 1200, min: 800 },
       items: 4,
       slidesToSlide: 2
     },
+    foldable: {
+      breakpoint: { max: 800, min: 550},
+      items: 3,
+      itemsToSlide: 1,
+    },
     mobile: {
-      breakpoint: { max: 464, min: 0 },
+      breakpoint: { max: 550, min: 0 },
       items: 2,
       slidesToSlide: 1
     },
