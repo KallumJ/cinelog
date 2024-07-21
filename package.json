@@ -9,6 +9,11 @@
 		"lint": "eslint . --ext .ts,.tsx -c .eslintrc.json --fix"
 	},
 	"dependencies": {
+		"@emotion/react": "^11.13.0",
+		"@emotion/styled": "^11.13.0",
+		"@fontsource/roboto": "^5.0.13",
+		"@mui/icons-material": "^5.16.4",
+		"@mui/material": "^5.16.4",
 		"@nextui-org/button": "2.0.37",
 		"@nextui-org/code": "2.0.32",
 		"@nextui-org/input": "2.2.4",
@@ -31,6 +36,7 @@
 		"react": "18.3.1",
 		"react-dom": "18.3.1",
 		"react-multi-carousel": "^2.8.5",
+		"react-ts-rating-star": "^1.0.4",
 		"tmdb-ts": "^2.0.0"
 	},
 	"devDependencies": {
