@@ -23,7 +23,7 @@ export default async function Movie({
           title={movie.title}
         />
         <div
-          className="flex w-full items-end bg-contain p-2"
+          className="flex w-full items-end bg-cover p-2"
           style={{
             backgroundImage: `url(${tmdb.image.getSrcForPath(movie.backdrop_path, PosterSize.ORIGINAL)})`,
           }}
