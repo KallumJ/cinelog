@@ -30,7 +30,6 @@ export async function login(formData: FormData) {
 }
 
 export async function logout() {
-  console.log("running");
   cookies().delete("pb_auth");
   redirect("/");
 }
