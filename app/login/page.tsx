@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { login } from '../../lib/pocketbase';
+import { login } from '../../actions/auth_actions';
 
 import AuthForm from '@/components/AuthForm';
 

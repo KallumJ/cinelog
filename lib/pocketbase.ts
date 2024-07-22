@@ -1,48 +1,58 @@
-"use server";
-
 import PocketBase from "pocketbase";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
-export async function login(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+import { TypedPocketBase } from "@/types/pocketbase-types"
 
-  // TODO: server-side validation
+// let singletonClient: TypedPocketBase | null = null;
 
-  const pb = new PocketBase(process.env.POCKETBASE_URL);
+// export function createBrowserClient() {
+//   if (!process.env.NEXT_PUBLIC_POCKETBASE_API_URL) {
+//     throw new Error("Pocketbase API url not defined !");
+//   }
 
-  const { token, record: model } = await pb
-    .collection("users")
-    .authWithPassword(email, password);
+//   const createNewClient = () => {
+//     return new PocketBase(
+//       process.env.NEXT_PUBLIC_POCKETBASE_API_URL
+//     ) as TypedPocketBase;
+//   };
 
-  const cookie = JSON.stringify({ token, model });
+//   const _singletonClient = singletonClient ?? createNewClient();
 
-  cookies().set("pb_auth", cookie, {
-    secure: true,
-    path: "/",
-    sameSite: "strict",
-    httpOnly: true,
-  });
+//   if (typeof window === "undefined") return _singletonClient;
 
-  redirect("/");
-}
+//   if (!singletonClient) singletonClient = _singletonClient;
 
-export async function logout() {
-  cookies().delete("pb_auth");
-  redirect("/");
-}
+//   singletonClient.authStore.onChange(() => {
+//     document.cookie = singletonClient!.authStore.exportToCookie({
+//       httpOnly: false,
+//     });
+//   });
 
-export async function register(formData: FormData) {
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const passwordConfirm = formData.get("passwordConfirm") as string
+//   return singletonClient;
+// }
 
-    // TODO: server-side validation
-
-  const pb = new PocketBase(process.env.POCKETBASE_URL);
-
-  await pb.collection("users").create({ email, password, passwordConfirm})
-
-  redirect("/login")
-}
+export function createServerClient(cookieStore?: ReadonlyRequestCookies) {
+    if (!process.env.NEXT_PUBLIC_POCKETBASE_API_URL) {
+      throw new Error("Pocketbase API url not defined !");
+    }
+  
+    if (typeof window !== "undefined") {
+      throw new Error(
+        "This method is only supposed to call from the Server environment"
+      );
+    }
+  
+    const client = new PocketBase(
+      process.env.NEXT_PUBLIC_POCKETBASE_API_URL
+    ) as TypedPocketBase;
+  
+    if (cookieStore) {
+      const authCookie = cookieStore.get("pb_auth");
+  
+      if (authCookie) {
+        client.authStore.loadFromCookie(`${authCookie.name}=${authCookie.value}`);
+      }
+    }
+  
+    return client;
+  }

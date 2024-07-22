@@ -9,10 +9,13 @@ import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { cookies } from "next/headers";
 
+import { createServerClient } from "../lib/pocketbase";
+
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
+import NavBar from "@/components/NavBar";
 
 export const metadata: Metadata = {
   title: {
@@ -32,11 +35,13 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pb = createServerClient(cookies());
+
   return (
     <html suppressHydrationWarning lang="en">
       <head />
@@ -49,7 +54,7 @@ export default function RootLayout({
         <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
           <div className="relative flex flex-col h-screen">
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-              {cookies().get("pb_auth") ? <p>Logged in</p> : <p>Not logged in</p>}
+              <NavBar className="mb-6" email={pb.authStore.model?.email} isAuthenticated={pb.authStore.isValid}  />
               {children}
             </main>
           </div>
