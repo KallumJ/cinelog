@@ -11,8 +11,8 @@ interface CreditAvatarProps {
 
 export default function CreditAvatar({ src, className, name, job }: CreditAvatarProps) {
   return (
-    <div className="inline-block text-center">
-      <Avatar className={clsx("mx-2", className)} name={name} src={src} />
+    <div className="text-center">
+      <Avatar showFallback className={clsx("mx-2 inline-block", className)} imgProps={{ draggable: false}} name={name} src={src}/>
       <p className="my-1 font-semibold">{name}</p>
       <p>{job}</p>
     </div>

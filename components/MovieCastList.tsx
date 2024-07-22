@@ -67,6 +67,7 @@ export default function MovieCastList({ credits }: MovieCastListProps) {
 
   creditList.push(
     <CreditAvatar
+      key={director.id}
       className="w-20 h-20"
       job={director.job}
       name={director.name}
@@ -77,8 +78,6 @@ export default function MovieCastList({ credits }: MovieCastListProps) {
   );
 
   return (
-    <div>
-      <Carousel responsive={responsive}>{creditList}</Carousel>
-    </div>
+    <Carousel responsive={responsive}>{creditList}</Carousel>
   );
 }
