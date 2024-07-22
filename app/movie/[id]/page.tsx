@@ -33,7 +33,16 @@ export default async function Movie({
         </div>
       </div>
       <div className="my-4">
-        <MediaBody budget={movie.budget} credits={credits} description={movie.overview} productionCompanies={movie.production_companies} runtime={movie.runtime} tagline={movie.tagline} title={movie.title} />
+        <MediaBody
+          budget={movie.budget}
+          credits={credits}
+          description={movie.overview}
+          imdbId={movie.imdb_id}
+          productionCompanies={movie.production_companies}
+          runtime={movie.runtime}
+          tagline={movie.tagline}
+          title={movie.title}
+        />
       </div>
     </div>
   );
