@@ -5,7 +5,7 @@ import React from "react";
 import { PosterSize } from "tmdb-ts";
 import clsx from "clsx";
 
-import { tmdb } from "@/app/lib/tmdb";
+import { tmdb } from "@/lib/tmdb";
 
 interface PosterProps {
   title: string;

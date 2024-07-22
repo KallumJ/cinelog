@@ -1,7 +1,7 @@
 import React from "react";
 import { PosterSize } from "tmdb-ts";
 
-import { tmdb } from "@/app/lib/tmdb";
+import { tmdb } from "@/lib/tmdb";
 import Poster from "@/components/Poster";
 import MediaHeader from "@/components/MediaHeader";
 import MediaBody from "@/components/MediaBody";
@@ -29,7 +29,7 @@ export default async function Movie({
           }}
         >
           <div className="absolute inset-0 bg-black opacity-50" />
-          <MediaHeader title={movie.title} />
+          <MediaHeader releaseDate={movie.release_date} title={movie.title} />
         </div>
       </div>
       <div className="my-4">
@@ -39,6 +39,7 @@ export default async function Movie({
           description={movie.overview}
           imdbId={movie.imdb_id}
           productionCompanies={movie.production_companies}
+          releaseDate={movie.release_date}
           runtime={movie.runtime}
           tagline={movie.tagline}
           title={movie.title}

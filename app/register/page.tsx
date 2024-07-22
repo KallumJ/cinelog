@@ -1,7 +1,7 @@
 
 import React from 'react'
 
-import { register } from '../lib/pocketbase';
+import { register } from '../../lib/pocketbase';
 
 import AuthForm from '@/components/AuthForm';
 

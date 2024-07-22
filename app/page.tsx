@@ -1,6 +1,6 @@
 import { unstable_noStore as noStore } from 'next/cache';
 
-import { tmdb } from "./lib/tmdb";
+import { tmdb } from "../lib/tmdb";
 
 import MediaCarouselTile from "@/components/MediaCarousel/MediaCarouselTile";
 import MediaCarousel from "@/components/MediaCarousel/MediaCarousel";

@@ -18,6 +18,7 @@ interface MediaBodyProps {
   credits: Credits;
   title: string;
   imdbId: string;
+  releaseDate: string;
 }
 
 export default function MediaBody({
@@ -29,6 +30,7 @@ export default function MediaBody({
   credits,
   title,
   imdbId,
+  releaseDate
 }: MediaBodyProps) {
   return (
     <Card className="p-4">
@@ -38,6 +40,7 @@ export default function MediaBody({
           <p className="my-4 text-lg">{description}</p>
         </div>
         <div className="ml-2 mb-8">
+          <p><span className="font-semibold">Release date: </span> {`${new Date(releaseDate).toLocaleDateString()}`}</p>
           <p>
             <span className="font-semibold">Runtime: </span>
             {`${runtime} minutes`}

@@ -4,7 +4,7 @@ import Carousel from "react-multi-carousel";
 
 import CreditAvatar from "./CreditAvatar";
 
-import { tmdb } from "@/app/lib/tmdb";
+import { tmdb } from "@/lib/tmdb";
 
 interface MovieCastListProps {
   credits: Credits;
