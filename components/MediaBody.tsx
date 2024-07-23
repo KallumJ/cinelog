@@ -2,35 +2,31 @@
 
 import { Card } from "@nextui-org/react";
 import React from "react";
-import { Credits, ProductionCompany } from "tmdb-ts";
-import { Link } from "@nextui-org/link";
-import ReviewsIcon from "@mui/icons-material/Reviews";
-import SpeakerNotesIcon from "@mui/icons-material/SpeakerNotes";
+import { CreatedBy, Credits, ProductionCompany } from "tmdb-ts";
 
-import MovieCastList from "./MovieCastList";
+import MediaCastList from "./MovieCastList";
+import DiscussionLinks from "./DiscussionLinks";
 
 interface MediaBodyProps {
   description: string;
   tagline: string;
-  runtime: number;
-  budget: number;
   productionCompanies: ProductionCompany[];
   credits: Credits;
   title: string;
-  imdbId: string;
-  releaseDate: string;
+  imdbId?: string;
+  details: { key: string; value: string }[];
+  createdBy?: CreatedBy[];
 }
 
 export default function MediaBody({
   description,
   tagline,
-  runtime,
-  budget,
   productionCompanies,
   credits,
   title,
   imdbId,
-  releaseDate
+  details,
+  createdBy,
 }: MediaBodyProps) {
   return (
     <Card className="p-4">
@@ -40,15 +36,11 @@ export default function MediaBody({
           <p className="my-4 text-lg">{description}</p>
         </div>
         <div className="ml-2 mb-8">
-          <p><span className="font-semibold">Release date: </span> {`${new Date(releaseDate).toLocaleDateString()}`}</p>
-          <p>
-            <span className="font-semibold">Runtime: </span>
-            {`${runtime} minutes`}
-          </p>
-          <p>
-            <span className="font-semibold">Budget: </span>{" "}
-            {`$${budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`}
-          </p>
+          {details.map((d) => (
+            <p key={d.key}>
+              <span className="font-semibold">{d.key}: </span> {d.value}
+            </p>
+          ))}
           <p className="font-semibold">Production companies:</p>
           <ul className="list-disc list-inside sm:w-96">
             {productionCompanies.map((c) => (
@@ -57,23 +49,8 @@ export default function MediaBody({
           </ul>
         </div>
       </div>
-      <MovieCastList credits={credits} />
-      <div>
-        <Link
-          className="inline-block"
-          color={"foreground"}
-          href={`https://www.reddit.com/r/movies/search/?q=${title.replace(" ", "+")}+discussion&type=link&nsfw=0`}
-        >
-          <SpeakerNotesIcon className="fill-orange-600" /> Reddit discussions
-        </Link>
-        <Link
-          className="inline-block"
-          color={"foreground"}
-          href={`https://www.imdb.com/title/${imdbId}/reviews/`}
-        >
-          <ReviewsIcon className="ml-2 fill-yellow-400" /> IMDb reviews
-        </Link>
-      </div>
+      <MediaCastList createdBy={createdBy} credits={credits} />
+      <DiscussionLinks imdbId={imdbId} title={title} />
     </Card>
   );
 }

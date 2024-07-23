@@ -1,16 +1,17 @@
 import React, { ReactNode } from "react";
-import { Credits, ProfileSize } from "tmdb-ts";
+import { CreatedBy, Credits, ProfileSize } from "tmdb-ts";
 import Carousel from "react-multi-carousel";
 
 import CreditAvatar from "./CreditAvatar";
 
 import { tmdb } from "@/lib/tmdb";
 
-interface MovieCastListProps {
+interface MediaCastListProps {
   credits: Credits;
+  createdBy?: CreatedBy[]
 }
 
-export default function MovieCastList({ credits }: MovieCastListProps) {
+export default function MediaCastList({ credits, createdBy }: MediaCastListProps) {
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 4000, min: 3000 },
@@ -38,10 +39,16 @@ export default function MovieCastList({ credits }: MovieCastListProps) {
       slidesToSlide: 1,
     },
   };
-
-  const director = credits.crew.filter((c) => c.job === "Director").shift()!;
-
   const creditList: ReactNode[] = [];
+
+  const priorityJobs = ["Director"];
+  const priorityCrew = credits.crew.filter((c) => priorityJobs.includes(c.job)).map(c => <CreditAvatar
+    key={c.id}
+    className="w-20 h-20"
+    job={c.job}
+    name={c.name}
+    src={tmdb.image.getSrcForPath(c.profile_path, ProfileSize.W185)}
+  />);
 
   const cast = credits.cast.map((c) => (
     <CreditAvatar
@@ -65,16 +72,19 @@ export default function MovieCastList({ credits }: MovieCastListProps) {
       />
     ));
 
-  creditList.push(
-    <CreditAvatar
-      key={director.id}
+    const creators = createdBy?.map(c => <CreditAvatar
+      key={c.id}
       className="w-20 h-20"
-      job={director.job}
-      name={director.name}
-      src={tmdb.image.getSrcForPath(director.profile_path, ProfileSize.W185)}
-    />,
+      job={"Creator"}
+      name={c.name}
+      src={tmdb.image.getSrcForPath(c.profile_path, ProfileSize.W185)}
+    />) ?? [];
+
+  creditList.push(
+    ...creators,
+    ...priorityCrew,
     ...cast,
-    ...crew
+    ...crew,
   );
 
   return (
