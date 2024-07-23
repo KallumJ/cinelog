@@ -40,7 +40,8 @@
 		"react-dom": "18.3.1",
 		"react-multi-carousel": "^2.8.5",
 		"react-ts-rating-star": "^1.0.4",
-		"tmdb-ts": "^2.0.0"
+		"tmdb-ts": "^2.0.0",
+		"use-debounce": "^10.0.1"
 	},
 	"devDependencies": {
 		"@types/node": "20.5.7",
