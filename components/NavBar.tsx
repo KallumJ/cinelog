@@ -48,6 +48,7 @@ export default function NavBar({
     <Navbar
       className={clsx("h-1", className)}
       disableAnimation={true}
+      position="static"
       onMenuOpenChange={setIsMenuOpen}
     >
       <NavbarContent>
