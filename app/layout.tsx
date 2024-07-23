@@ -55,7 +55,9 @@ export default async function RootLayout({
           <div className="relative flex flex-col h-screen">
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
               <NavBar className="mb-6" email={pb.authStore.model?.email} isAuthenticated={pb.authStore.isValid}  />
-              {children}
+              <div className="mt-16">
+                {children}
+              </div>
             </main>
           </div>
         </Providers>
