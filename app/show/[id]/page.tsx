@@ -19,8 +19,9 @@ export default async function Page({
   return (
     <MediaDetailsPage
       backdropPath={show.backdrop_path}
+      firstDate={show.first_air_date}
+      lastDate={show.last_air_date}
       posterPath={show.poster_path}
-      releaseDate={show.first_air_date}
       title={show.name}
     >
       <MediaBody

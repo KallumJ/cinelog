@@ -10,16 +10,18 @@ interface MediaDetailsPageProps {
   posterPath?: string;
   title: string;
   backdropPath: string;
-  releaseDate: string;
   children: ReactNode;
+  firstDate: string;
+  lastDate?: string;
 }
 
 export default function MediaDetailsPage({
   posterPath,
   title,
   backdropPath,
-  releaseDate,
   children,
+  firstDate,
+  lastDate
 }: MediaDetailsPageProps) {
   return (
     <div>
@@ -36,7 +38,7 @@ export default function MediaDetailsPage({
           }}
         >
           <div className="absolute inset-0 bg-black opacity-50" />
-          <MediaHeader releaseDate={releaseDate} title={title} />
+          <MediaHeader firstDate={firstDate} lastDate={lastDate} title={title} />
         </div>
       </div>
       <div className="my-4">{children}</div>

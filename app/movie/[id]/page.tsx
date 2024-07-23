@@ -19,7 +19,7 @@ export default async function Movie({
   ]
 
   return (
-    <MediaDetailsPage backdropPath={movie.backdrop_path} posterPath={movie.poster_path} releaseDate={movie.release_date} title={movie.title}>
+    <MediaDetailsPage backdropPath={movie.backdrop_path} firstDate={movie.release_date} posterPath={movie.poster_path} title={movie.title}>
         <MediaBody
           credits={credits}
           description={movie.overview}
