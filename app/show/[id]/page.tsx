@@ -28,6 +28,7 @@ export default async function Page({
         credits={credits}
         description={show.overview}
         details={details}
+        mediaType="television"
         productionCompanies={show.production_companies}
         tagline={show.tagline}
         title={show.name}

@@ -25,6 +25,7 @@ export default async function Movie({
           description={movie.overview}
           details={details}
           imdbId={movie.imdb_id}
+          mediaType="movies"
           productionCompanies={movie.production_companies}
           tagline={movie.tagline}
           title={movie.title}

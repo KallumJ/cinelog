@@ -16,6 +16,7 @@ interface MediaBodyProps {
   imdbId?: string;
   details: { key: string; value: string }[];
   createdBy?: CreatedBy[];
+  mediaType: "television" | "movies"
 }
 
 export default function MediaBody({
@@ -27,6 +28,7 @@ export default function MediaBody({
   imdbId,
   details,
   createdBy,
+  mediaType
 }: MediaBodyProps) {
   return (
     <Card className="p-4">
@@ -50,7 +52,7 @@ export default function MediaBody({
         </div>
       </div>
       <MediaCastList createdBy={createdBy} credits={credits} />
-      <DiscussionLinks imdbId={imdbId} title={title} />
+      <DiscussionLinks imdbId={imdbId} mediaType={mediaType} title={title} />
     </Card>
   );
 }

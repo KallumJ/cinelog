@@ -5,19 +5,21 @@ import SpeakerNotesIcon from "@mui/icons-material/SpeakerNotes";
 
 interface DiscussionLinksProps {
   title: string;
+  mediaType: "television" | "movies";
   imdbId?: string;
 }
 
 export default function DiscussionLinks({
   title,
   imdbId,
+  mediaType,
 }: DiscussionLinksProps) {
   return (
     <div>
       <Link
         className="inline-block"
         color={"foreground"}
-        href={`https://www.reddit.com/r/movies/search/?q=${title.replace(" ", "+")}+discussion&type=link&nsfw=0`}
+        href={`https://www.reddit.com/r/${mediaType}/search/?q=${title.replace(" ", "+")}+discussion&type=link&nsfw=0`}
       >
         <SpeakerNotesIcon className="fill-orange-600" /> Reddit discussions
       </Link>
