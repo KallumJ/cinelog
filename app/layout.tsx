@@ -8,6 +8,7 @@ import 'react-multi-carousel/lib/styles.css';
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
 import { cookies } from "next/headers";
+import Script from "next/script";
 
 import { createServerClient } from "../lib/pocketbase";
 
@@ -44,7 +45,9 @@ export default async function RootLayout({
 
   return (
     <html suppressHydrationWarning lang="en">
-      <head />
+      <head >
+      <Script data-domain="cinelog.coolify.kallumj.xyz" src="https://plausible.aurora.kallumj.xyz/js/script.js" strategy="beforeInteractive" />
+      </head>
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",
