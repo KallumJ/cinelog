@@ -8,6 +8,7 @@ import type { RecordService } from 'pocketbase'
 export enum Collections {
 	Rating = "rating",
 	Users = "users",
+	Watches = "watches",
 }
 
 // Alias types for improved usability
@@ -35,7 +36,7 @@ export type AuthSystemFields<T = never> = {
 // Record types for each collection
 
 export type RatingRecord = {
-	media_id?: string
+	media_id?: number
 	rating?: number
 	user_id?: RecordIdString
 }
@@ -45,20 +46,28 @@ export type UsersRecord = {
 	name?: string
 }
 
+export type WatchesRecord = {
+	media_id?: number
+	user_id?: RecordIdString
+}
+
 // Response types include system fields and match responses from the PocketBase API
 export type RatingResponse<Texpand = unknown> = Required<RatingRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
+export type WatchesResponse<Texpand = unknown> = Required<WatchesRecord> & BaseSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
 	rating: RatingRecord
 	users: UsersRecord
+	watches: WatchesRecord
 }
 
 export type CollectionResponses = {
 	rating: RatingResponse
 	users: UsersResponse
+	watches: WatchesResponse
 }
 
 // Type for usage with type asserted PocketBase instance
@@ -67,4 +76,5 @@ export type CollectionResponses = {
 export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'rating'): RecordService<RatingResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
+	collection(idOrName: 'watches'): RecordService<WatchesResponse>
 }

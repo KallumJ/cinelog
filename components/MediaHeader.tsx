@@ -3,7 +3,7 @@
 import React from "react";
 import { Card } from "@nextui-org/react";
 
-import StarRating from "./StarRating";
+import MediaControls from "./MediaControls";
 
 import { getYearFromDateString } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ interface MediaHeaderProps {
   tmdbId: number
   initialRating?: number
   tmdbRating: number;
+  watchedToday: boolean;
 }
 
 export default function MediaHeader({
@@ -24,13 +25,14 @@ export default function MediaHeader({
   userId,
   tmdbId,
   initialRating,
-  tmdbRating
+  tmdbRating,
+  watchedToday
 }: MediaHeaderProps) {
   const dateStr = !lastDate ? getYearFromDateString(firstDate) : `${getYearFromDateString(firstDate)}-${getYearFromDateString(lastDate)}`
 
   return (
     <Card className="p-2 sm:p-6">
-      <StarRating initialRating={initialRating} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={userId}/>
+      <MediaControls initialRating={initialRating} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={userId} watchedToday={watchedToday}/>
       <h1 className="md:text-6xl sm:text-5xl text-2xl font-bold">
         {title}{" "}
         <span className="dark:text-gray-500 md:text-2xl sm:text-xl text-sm">{dateStr}</span>
