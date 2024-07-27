@@ -38,7 +38,7 @@ export default function MediaCarousel({ mediaTiles }: MediaCarouselProps) {
   };
 
   return (
-    <Carousel draggable={true} responsive={responsive} swipeable={true}>
+    <Carousel className="-z-0" draggable={true} responsive={responsive} swipeable={true}>
       {mediaTiles}
     </Carousel>
   );
