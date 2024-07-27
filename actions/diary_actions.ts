@@ -5,6 +5,7 @@ import { ClientResponseError } from "pocketbase";
 
 import { createServerClient } from "../lib/pocketbase";
 import { formatDate } from "../lib/utils";
+import { NotAuthenticatedError } from "../types/errors";
 
 export async function updateRating(tmdbId: number, rating: number) {
   const pb = createServerClient(cookies());
@@ -37,6 +38,9 @@ export async function isWatchedToday(tmdbId: number) {
   const pb = createServerClient(cookies());
 
   try {
+    if (!pb.authStore.isValid)
+        throw new NotAuthenticatedError("Can not get watched if the user is not authenticated")
+
     const now = new Date();
     const dawn = new Date(
       now.getFullYear(),
@@ -67,7 +71,7 @@ export async function isWatchedToday(tmdbId: number) {
       )
     );
   } catch (e) {
-    if (e instanceof ClientResponseError && e.status === 404) {
+    if ((e instanceof ClientResponseError && e.status === 404) || e instanceof NotAuthenticatedError) {
       return null;
     } else {
       throw e;

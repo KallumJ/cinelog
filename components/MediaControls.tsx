@@ -79,16 +79,23 @@ export default function MediaControls({
         value={tmdbRating * 10}
       />
 
-      <button
-        onClick={async () => {
-          const newValue = !watchedRecently;
-
-          setWatchedRecently(newValue);
-          await setWatched(tmdbId);
-        }}
+      <Tooltip
+        open={!userId}
+        placement="top-start"
+        title="You need to log in to mark as watched!"
       >
-        {watchedRecently ? <VisibilityIcon /> : <VisibilityOutlinedIcon />}
-      </button>
+        <button
+          disabled={!userId}
+          onClick={async () => {
+            const newValue = !watchedRecently;
+
+            setWatchedRecently(newValue);
+            await setWatched(tmdbId);
+          }}
+        >
+          {watchedRecently ? <VisibilityIcon /> : <VisibilityOutlinedIcon />}
+        </button>
+      </Tooltip>
     </div>
   );
 }
