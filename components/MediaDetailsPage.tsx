@@ -33,11 +33,12 @@ export default async function MediaDetailsPage({
   const pb = createServerClient(cookies())
 
   const user_id = pb.authStore.model?.id
-  const existingRating = await pb.collection("rating").getFirstListItem(pb.filter("user_id={:user_id} && media_id={:tmdb_id}", { user_id, tmdb_id: tmdbId })).then(res => res.rating).catch(err => {
+  
+  const existingRating = user_id ? await pb.collection("rating").getFirstListItem(pb.filter("user_id={:user_id} && media_id={:tmdb_id}", { user_id, tmdb_id: tmdbId })).then(res => res.rating).catch(err => {
     if (!(err instanceof ClientResponseError && err.status == 404)) console.error(err);
 
     return 0;
-  })
+  }) : 0;
   
   return (
     <div>
