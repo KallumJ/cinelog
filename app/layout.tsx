@@ -46,7 +46,7 @@ export default async function RootLayout({
   return (
     <html suppressHydrationWarning lang="en">
       <head >
-      <Script data-domain="cinelog.coolify.kallumj.xyz" src="https://plausible.aurora.kallumj.xyz/js/script.js" strategy="beforeInteractive" />
+      <Script data-website-id="453757b5-cab5-47bf-ac14-aa66208bcf7c" src="https://umami.aurora.kallumj.xyz/script.js" strategy="beforeInteractive" />
       </head>
       <body
         className={clsx(
