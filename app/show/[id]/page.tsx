@@ -23,6 +23,8 @@ export default async function Page({
       lastDate={show.last_air_date}
       posterPath={show.poster_path}
       title={show.name}
+      tmdbId={show.id}
+      tmdbRating={show.vote_average}
     >
       <MediaBody
         createdBy={show.created_by}
