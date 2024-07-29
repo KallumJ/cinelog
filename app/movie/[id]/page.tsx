@@ -11,6 +11,7 @@ export default async function Movie({
 }) {
   const movie = await tmdb.movies.details(id);
   const credits = await tmdb.movies.credits(movie.id);
+  const watchProviders = await tmdb.movies.watchProviders(movie.id)
 
   const details = [
     {
@@ -42,6 +43,7 @@ export default async function Movie({
         productionCompanies={movie.production_companies}
         tagline={movie.tagline}
         title={movie.title}
+        providers={watchProviders}
       />
     </MediaDetailsPage>
   );

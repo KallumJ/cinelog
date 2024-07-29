@@ -2,10 +2,11 @@
 
 import { Card } from "@nextui-org/react";
 import React from "react";
-import { CreatedBy, Credits, ProductionCompany } from "tmdb-ts";
+import { CreatedBy, Credits, ProductionCompany, WatchProviders as WatchProvidersType } from "tmdb-ts";
 
 import MediaCastList from "./MovieCastList";
 import DiscussionLinks from "./DiscussionLinks";
+import WatchProviders from "./WatchProviders";
 
 interface MediaBodyProps {
   description: string;
@@ -17,6 +18,7 @@ interface MediaBodyProps {
   details: { key: string; value: string }[];
   createdBy?: CreatedBy[];
   mediaType: "television" | "movies"
+  providers: WatchProvidersType
 }
 
 export default function MediaBody({
@@ -28,7 +30,8 @@ export default function MediaBody({
   imdbId,
   details,
   createdBy,
-  mediaType
+  mediaType,
+  providers
 }: MediaBodyProps) {
   return (
     <Card className="p-4">
@@ -53,6 +56,7 @@ export default function MediaBody({
       </div>
       <MediaCastList createdBy={createdBy} credits={credits} />
       <DiscussionLinks imdbId={imdbId} mediaType={mediaType} title={title} />
+      <WatchProviders providers={providers}/>
     </Card>
   );
 }
