@@ -1,5 +1,3 @@
-"use client";
-
 import { Link, Radio, RadioGroup } from "@nextui-org/react";
 import React, { useState } from "react";
 import Carousel from "react-multi-carousel";
@@ -42,16 +40,16 @@ interface ProviderCountry {
 }
 
 interface Provider {
-    link?: string;
-    rent?: Rent[];
-    flatrate?: Flatrate[];
-    buy?: Buy[];
-  }
+  link?: string;
+  rent?: Rent[];
+  flatrate?: Flatrate[];
+  buy?: Buy[];
+}
 
 export default function WatchProviders({ providers }: WatchProvidersProps) {
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
   const DEFAULT_REGION = "GB";
-  const DEFAULT_CATEGORY = ProviderCategory.STREAM
+  const DEFAULT_CATEGORY = ProviderCategory.STREAM;
 
   const responsive = {
     superLargeDesktop: {
@@ -92,71 +90,81 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
         flag: getFlagEmojiForCountryCode(p),
       };
     })
-    .sort((a, b) =>
-        sortAlphabetically(a.countryName, b.countryName)
-    );
+    .sort((a, b) => sortAlphabetically(a.countryName, b.countryName));
 
-  const {
-    link,
-    rent,
-    flatrate,
-    buy,
-  }: Provider = providers.results[selectedCountry as keyof WatchLocale];
+  const { link, rent, flatrate, buy }: Provider =
+    providers.results[selectedCountry as keyof WatchLocale] ?? {};
 
   const carouselData: CarouselData[] = [
-    ...(rent ?? []).map(r => ({ ...r, type: ProviderCategory.RENT }) as CarouselData),
-    ...(flatrate ?? []).map(f => ({ ...f, type: ProviderCategory.STREAM }) as CarouselData),
-    ...(buy ?? []).map(b => ({ ...b, type: ProviderCategory.BUY }) as CarouselData),
+    ...(rent ?? []).map(
+      (r) => ({ ...r, type: ProviderCategory.RENT }) as CarouselData
+    ),
+    ...(flatrate ?? []).map(
+      (f) => ({ ...f, type: ProviderCategory.STREAM }) as CarouselData
+    ),
+    ...(buy ?? []).map(
+      (b) => ({ ...b, type: ProviderCategory.BUY }) as CarouselData
+    ),
   ];
 
   const filteredData = carouselData.filter((d) => d.type === selectedCategory);
 
+  const anyProviders = Object.keys(providers.results).length > 0;
+
   return (
     <div>
-        <h1 className="text-2xl font-bold mb-4">Providers</h1>
-      <div className="flex gap-8 flex-row items-center">
-        <select
-          className="select select-bordered w-full max-w-xs p-2"
-          defaultValue={DEFAULT_REGION}
-          onChange={(e) => setSelectedCountry(e.target.value)}
-        >
-          {countries.map((c) => (
-            <option key={c.countryCode} value={c.countryCode}>
-              {c.flag} {c.countryName}
-            </option>
-          ))}
-        </select>
+      {anyProviders ? (
+        <div>
+          <h1 className="text-2xl font-bold mb-4">Providers</h1>
+          <div className="flex gap-8 flex-row items-center">
+            <select
+              className="select select-bordered w-full max-w-xs p-2"
+              defaultValue={DEFAULT_REGION}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+            >
+              {countries.map((c) => (
+                <option key={c.countryCode} value={c.countryCode}>
+                  {c.flag} {c.countryName}
+                </option>
+              ))}
+            </select>
 
-        <RadioGroup
-          defaultValue={DEFAULT_CATEGORY}
-          orientation="horizontal"
-          onValueChange={(v) => setSelectedCategory(v as ProviderCategory)}
-        >
-          <Radio value={ProviderCategory.STREAM}>Stream</Radio>
-          <Radio value={ProviderCategory.RENT}>Rent</Radio>
-          <Radio value={ProviderCategory.BUY}>Buy</Radio>
-        </RadioGroup>
-        <Link href={link}>Click here for more details</Link>
-      </div>
-      {filteredData.length == 0 ? (
-        <p className="text-xl my-6">Not available to {selectedCategory} in the selected region</p>
+            <RadioGroup
+              defaultValue={DEFAULT_CATEGORY}
+              orientation="horizontal"
+              onValueChange={(v) => setSelectedCategory(v as ProviderCategory)}
+            >
+              <Radio value={ProviderCategory.STREAM}>Stream</Radio>
+              <Radio value={ProviderCategory.RENT}>Rent</Radio>
+              <Radio value={ProviderCategory.BUY}>Buy</Radio>
+            </RadioGroup>
+            <Link href={link}>Click here for more details</Link>
+          </div>
+          {filteredData.length == 0 ? (
+            <p className="text-xl my-6">
+              Not available to {selectedCategory} in the selected region
+            </p>
+          ) : (
+            <></>
+          )}
+          <Carousel
+            className="my-6"
+            draggable={true}
+            responsive={responsive}
+            swipeable={true}
+          >
+            {filteredData.map((o) => (
+              <MediaAvatar
+                key={o.provider_id + o.provider_name}
+                src={tmdb.image.getSrcForPath(o.logo_path, PosterSize.ORIGINAL)}
+                title={o.provider_name}
+              />
+            ))}
+          </Carousel>
+        </div>
       ) : (
-        <></>
+        <h1 className="text-2xl py-8">No providers available in any region</h1>
       )}
-      <Carousel
-        className="my-6"
-        draggable={true}
-        responsive={responsive}
-        swipeable={true}
-      >
-        {filteredData.map((o) => (
-            <MediaAvatar
-              key={o.provider_id + o.provider_name}
-              src={tmdb.image.getSrcForPath(o.logo_path, PosterSize.ORIGINAL)}
-              title={o.provider_name}
-            />
-          ))}
-      </Carousel>
     </div>
   );
 }
