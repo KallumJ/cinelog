@@ -11,6 +11,7 @@ export default async function Page({
 }) {
   const show = await tmdb.tvShows.details(id);
   const credits = await tmdb.tvShows.credits(id);
+  const providers = await tmdb.tvShows.watchProviders(id)
   const details = [
     { key: "Number of seasons", value: `${show.number_of_seasons}` },
     { key: "Number of episodes", value: `${show.number_of_episodes}` },
@@ -33,6 +34,7 @@ export default async function Page({
         details={details}
         mediaType="television"
         productionCompanies={show.production_companies}
+        providers={providers}
         tagline={show.tagline}
         title={show.name}
       />

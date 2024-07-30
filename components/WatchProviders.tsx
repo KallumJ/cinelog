@@ -1,3 +1,5 @@
+"use client"
+
 import { Link, Radio, RadioGroup } from "@nextui-org/react";
 import React, { useState } from "react";
 import Carousel from "react-multi-carousel";
@@ -47,9 +49,17 @@ interface Provider {
 }
 
 export default function WatchProviders({ providers }: WatchProvidersProps) {
+    const DEFAULT_REGION = "GB";
+    const DEFAULT_CATEGORY = ProviderCategory.STREAM;
+
+    const [selectedCountry, setSelectedCountry] = useState(DEFAULT_REGION);
+    const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
+
+    const anyProviders = Object.keys(providers?.results ?? {}).length > 0;
+    if (!anyProviders)
+        return <h1 className="text-2xl py-8">No providers available in any region</h1>
+
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
-  const DEFAULT_REGION = "GB";
-  const DEFAULT_CATEGORY = ProviderCategory.STREAM;
 
   const responsive = {
     superLargeDesktop: {
@@ -79,9 +89,6 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
     },
   };
 
-  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_REGION);
-  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
-
   const countries: ProviderCountry[] = Object.keys(providers.results)
     .map((p) => {
       return {
@@ -109,12 +116,8 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
 
   const filteredData = carouselData.filter((d) => d.type === selectedCategory);
 
-  const anyProviders = Object.keys(providers.results).length > 0;
-
   return (
     <div>
-      {anyProviders ? (
-        <div>
           <h1 className="text-2xl font-bold mb-4">Providers</h1>
           <div className="flex gap-8 flex-row items-center">
             <select
@@ -162,9 +165,5 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
             ))}
           </Carousel>
         </div>
-      ) : (
-        <h1 className="text-2xl py-8">No providers available in any region</h1>
-      )}
-    </div>
   );
 }
