@@ -55,8 +55,8 @@ export default function MediaBody({
         </div>
       </div>
       <MediaCastList createdBy={createdBy} credits={credits} />
-      <DiscussionLinks imdbId={imdbId} mediaType={mediaType} title={title} />
       <WatchProviders providers={providers}/>
+      <DiscussionLinks imdbId={imdbId} mediaType={mediaType} title={title} />
     </Card>
   );
 }

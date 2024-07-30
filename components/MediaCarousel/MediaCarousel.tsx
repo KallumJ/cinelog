@@ -2,7 +2,6 @@
 
 import React, { ReactNode } from "react";
 import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
 
 interface MediaCarouselProps {
   mediaTiles: ReactNode[];

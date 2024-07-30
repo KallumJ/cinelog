@@ -20,3 +20,15 @@ export function formatDate(date: Date) {
 
   return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
+
+export const sortAlphabetically = (a: string, b: string) =>
+  a.toLowerCase().localeCompare(b.toLowerCase())
+
+export function getFlagEmojiForCountryCode(countryCode: string) {
+  let codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+
+  return String.fromCodePoint(...codePoints);
+}

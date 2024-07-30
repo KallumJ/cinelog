@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { CreatedBy, Credits, ProfileSize } from "tmdb-ts";
 import Carousel from "react-multi-carousel";
 
-import CreditAvatar from "./CreditAvatar";
+import MediaAvatar from "./MediaAvatar";
 
 import { tmdb } from "@/lib/tmdb";
 
@@ -42,42 +42,42 @@ export default function MediaCastList({ credits, createdBy }: MediaCastListProps
   const creditList: ReactNode[] = [];
 
   const priorityJobs = ["Director"];
-  const priorityCrew = credits.crew.filter((c) => priorityJobs.includes(c.job)).map(c => <CreditAvatar
+  const priorityCrew = credits.crew.filter((c) => priorityJobs.includes(c.job)).map(c => <MediaAvatar
     key={c.id}
     className="w-20 h-20"
-    job={c.job}
-    name={c.name}
     src={tmdb.image.getSrcForPath(c.profile_path, ProfileSize.W185)}
+    subtitle={c.job}
+    title={c.name}
   />);
 
   const cast = credits.cast.map((c) => (
-    <CreditAvatar
+    <MediaAvatar
       key={c.id}
       className="w-20 h-20"
-      job={c.character}
-      name={c.name}
       src={tmdb.image.getSrcForPath(c.profile_path, ProfileSize.W185)}
+      subtitle={c.character}
+      title={c.name}
     />
   ));
 
   const crew = credits.crew
     .filter((c) => c.job !== "Director")
     .map((c) => (
-      <CreditAvatar
+      <MediaAvatar
         key={c.id}
         className="w-20 h-20"
-        job={c.job}
-        name={c.name}
         src={tmdb.image.getSrcForPath(c.profile_path, ProfileSize.W185)}
+        subtitle={c.job}
+        title={c.name}
       />
     ));
 
-    const creators = createdBy?.map(c => <CreditAvatar
+    const creators = createdBy?.map(c => <MediaAvatar
       key={c.id}
       className="w-20 h-20"
-      job={"Creator"}
-      name={c.name}
       src={tmdb.image.getSrcForPath(c.profile_path, ProfileSize.W185)}
+      subtitle={"Creator"}
+      title={c.name}
     />) ?? [];
 
   creditList.push(

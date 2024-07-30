@@ -1,61 +1,162 @@
-import { Avatar, Card, Checkbox, CheckboxGroup, Radio, RadioGroup, Select, SelectItem } from '@nextui-org/react';
-import React, { useState } from 'react'
-import { Buy, Flatrate, Rent, WatchLocale, WatchProviders } from 'tmdb-ts';
+"use client";
+
+import { Link, Radio, RadioGroup } from "@nextui-org/react";
+import React, { useState } from "react";
+import Carousel from "react-multi-carousel";
+import {
+  Buy,
+  Flatrate,
+  PosterSize,
+  Rent,
+  WatchLocale,
+  WatchProviders as WatchProvidersType,
+} from "tmdb-ts";
+
+import MediaAvatar from "./MediaAvatar";
+
+import { tmdb } from "@/lib/tmdb";
+import { getFlagEmojiForCountryCode, sortAlphabetically } from "@/lib/utils";
+
+enum ProviderCategory {
+  STREAM = "stream",
+  BUY = "buy",
+  RENT = "rent",
+}
+
+interface CarouselData {
+  logo_path: string;
+  provider_id: number;
+  provider_name: string;
+  display_priority: number;
+  type: ProviderCategory;
+}
 
 interface WatchProvidersProps {
-    providers: WatchProviders;
+  providers: WatchProvidersType;
 }
 
 interface ProviderCountry {
-    countryCode: string,
-    countryName: string,
-    flag: string
+  countryCode: string;
+  countryName: string;
+  flag: string;
 }
 
+interface Provider {
+    link?: string;
+    rent?: Rent[];
+    flatrate?: Flatrate[];
+    buy?: Buy[];
+  }
+
 export default function WatchProviders({ providers }: WatchProvidersProps) {
-    const regionNames = new Intl.DisplayNames(["en"], { type: "region" })
-    const DEFAULT_REGION = "GB"
+  const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+  const DEFAULT_REGION = "GB";
+  const DEFAULT_CATEGORY = ProviderCategory.STREAM
 
-    const [selectedCountry, setSelectedCountry] = useState<string>(DEFAULT_REGION);
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 3000 },
+      items: 6,
+      slidesToSlide: 3,
+    },
+    desktop: {
+      breakpoint: { max: 3000, min: 1200 },
+      items: 8,
+      slidesToSlide: 3,
+    },
+    tablet: {
+      breakpoint: { max: 1200, min: 800 },
+      items: 4,
+      slidesToSlide: 2,
+    },
+    foldable: {
+      breakpoint: { max: 800, min: 550 },
+      items: 3,
+      itemsToSlide: 1,
+    },
+    mobile: {
+      breakpoint: { max: 550, min: 0 },
+      items: 2,
+      slidesToSlide: 1,
+    },
+  };
 
-    function getFlagEmoji(countryCode: string) {
-        let codePoints = countryCode.toUpperCase().split('').map(char => 127397 + char.charCodeAt(0));
-        return String.fromCodePoint(...codePoints);
-    }
+  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_REGION);
+  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
 
-    const countries: ProviderCountry[] = Object.keys(providers.results).map(p => {
-        return {
-            countryCode: p,
-            countryName: regionNames.of(p) ?? "Unknown",
-            flag: getFlagEmoji(p)
-        }
-    }).sort((a, b) => a.countryName.toLowerCase().localeCompare(b.countryName.toLowerCase()))
+  const countries: ProviderCountry[] = Object.keys(providers.results)
+    .map((p) => {
+      return {
+        countryCode: p,
+        countryName: regionNames.of(p) ?? "Unknown",
+        flag: getFlagEmojiForCountryCode(p),
+      };
+    })
+    .sort((a, b) =>
+        sortAlphabetically(a.countryName, b.countryName)
+    );
 
-    const selectedProvider = providers.results[selectedCountry as keyof WatchLocale] as { link?: string; rent?: Rent[]; buy?: Buy[]; flatrate?: Flatrate[] };
+  const {
+    link,
+    rent,
+    flatrate,
+    buy,
+  }: Provider = providers.results[selectedCountry as keyof WatchLocale];
 
-    return (
-        <Card>
-            <Select
-                className="max-w-xs"
-                label="Country"
-                placeholder="Select a country"
-                onSelectionChange={(e) => {
-                    setSelectedCountry(e.currentKey ?? DEFAULT_REGION)
-                }}
-            >
-                {countries.map((p) => (
-                    <SelectItem key={p.countryCode} startContent={p.flag}>{p.countryName}</SelectItem>
-                ))}
-            </Select>
+  const carouselData: CarouselData[] = [
+    ...(rent ?? []).map(r => ({ ...r, type: ProviderCategory.RENT }) as CarouselData),
+    ...(flatrate ?? []).map(f => ({ ...f, type: ProviderCategory.STREAM }) as CarouselData),
+    ...(buy ?? []).map(b => ({ ...b, type: ProviderCategory.BUY }) as CarouselData),
+  ];
 
-            <RadioGroup
-                orientation="horizontal"
-                defaultValue={"stream"}
-            >
-                <Radio value="stream">Stream</Radio>
-                <Radio value="buy">Buy</Radio>
-                <Radio value="rent">Rent</Radio>
-            </RadioGroup>
-        </Card>
-    )
+  const filteredData = carouselData.filter((d) => d.type === selectedCategory);
+
+  return (
+    <div>
+        <h1 className="text-2xl font-bold mb-4">Providers</h1>
+      <div className="flex gap-8 flex-row items-center">
+        <select
+          className="select select-bordered w-full max-w-xs p-2"
+          defaultValue={DEFAULT_REGION}
+          onChange={(e) => setSelectedCountry(e.target.value)}
+        >
+          {countries.map((c) => (
+            <option key={c.countryCode} value={c.countryCode}>
+              {c.flag} {c.countryName}
+            </option>
+          ))}
+        </select>
+
+        <RadioGroup
+          defaultValue={DEFAULT_CATEGORY}
+          orientation="horizontal"
+          onValueChange={(v) => setSelectedCategory(v as ProviderCategory)}
+        >
+          <Radio value={ProviderCategory.STREAM}>Stream</Radio>
+          <Radio value={ProviderCategory.RENT}>Rent</Radio>
+          <Radio value={ProviderCategory.BUY}>Buy</Radio>
+        </RadioGroup>
+        <Link href={link}>Click here for more details</Link>
+      </div>
+      {filteredData.length == 0 ? (
+        <p className="text-xl my-6">Not available to {selectedCategory} in the selected region</p>
+      ) : (
+        <></>
+      )}
+      <Carousel
+        className="my-6"
+        draggable={true}
+        responsive={responsive}
+        swipeable={true}
+      >
+        {filteredData.map((o) => (
+            <MediaAvatar
+              key={o.provider_id + o.provider_name}
+              src={tmdb.image.getSrcForPath(o.logo_path, PosterSize.ORIGINAL)}
+              title={o.provider_name}
+            />
+          ))}
+      </Carousel>
+    </div>
+  );
 }
