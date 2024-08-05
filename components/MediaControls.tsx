@@ -1,10 +1,11 @@
 "use client";
-import { Rating, Tooltip } from "@mui/material";
-import React, { useState } from "react";
+import { Rating } from "@mui/material";
+import React, { useEffect, useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
 import { CircularProgress } from "@nextui-org/react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import clsx from "clsx";
 
 import {
   setWatched,
@@ -16,6 +17,7 @@ interface MediaControlsProps {
   initialRating?: number;
   tmdbRating: number;
   watchedToday: boolean;
+  className?: string;
 }
 
 export default function MediaControls({
@@ -24,9 +26,23 @@ export default function MediaControls({
   initialRating,
   tmdbRating,
   watchedToday,
+  className,
 }: MediaControlsProps) {
   const [rating, setRating] = useState(initialRating ?? 0);
   const [watchedRecently, setWatchedRecently] = useState(watchedToday);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowWidth(window.innerWidth);
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    // Cleanup event listener on component unmount
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   let ratingColour:
     | "default"
@@ -46,13 +62,8 @@ export default function MediaControls({
   }
 
   return (
-    <div className="flex p-2 flex-row items-center">
-      <Tooltip
-        open={!userId}
-        placement="top"
-        title="You need to log in to rate!"
-      >
-        <Rating
+    <div className={clsx("sm:flex p-4 sm:p-2 flex-row items-center", className)}>
+      <Rating
           disabled={!userId}
           emptyIcon={
             <StarIcon
@@ -61,29 +72,24 @@ export default function MediaControls({
             />
           }
           precision={0.5}
-          size={"large"}
+          size={windowWidth < 640 ? "medium" : "large"}
           value={rating}
           onChange={async (event, newValue) => {
             setRating(newValue ?? 0);
             await updateRatingAction(tmdbId, newValue ?? 0);
           }}
         />
-      </Tooltip>
 
-      <CircularProgress
-        aria-label="Average Rating"
-        className="mx-4"
-        color={ratingColour}
-        showValueLabel={true}
-        size="lg"
-        value={tmdbRating * 10}
-      />
+      <div className="flex">
+        <CircularProgress
+          aria-label="Average Rating"
+          className="mx-4"
+          color={ratingColour}
+          showValueLabel={true}
+          size="lg"
+          value={tmdbRating * 10}
+        />
 
-      <Tooltip
-        open={!userId}
-        placement="top-start"
-        title="You need to log in to mark as watched!"
-      >
         <button
           disabled={!userId}
           onClick={async () => {
@@ -95,7 +101,7 @@ export default function MediaControls({
         >
           {watchedRecently ? <VisibilityIcon /> : <VisibilityOutlinedIcon />}
         </button>
-      </Tooltip>
+      </div>
     </div>
   );
 }

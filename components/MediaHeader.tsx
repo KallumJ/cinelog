@@ -33,7 +33,7 @@ export default function MediaHeader({
   return (
     <Card className="p-2 sm:p-6">
       <MediaControls initialRating={initialRating} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={userId} watchedToday={watchedToday}/>
-      <h1 className="md:text-6xl sm:text-5xl text-2xl font-bold">
+      <h1 className="md:text-6xl sm:text-5xl text-lg font-bold">
         {title}{" "}
         <span className="dark:text-gray-500 md:text-2xl sm:text-xl text-sm">{dateStr}</span>
       </h1>
