@@ -45,6 +45,7 @@ export default function NavBar({
 
   return (
     <Navbar
+      key={Math.random() /* Forces the mobile search bar to close when searching */}
       className={clsx("h-1", className)}
       disableAnimation={true}
       position="static"
