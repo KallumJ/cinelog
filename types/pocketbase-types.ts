@@ -6,6 +6,8 @@ import type PocketBase from 'pocketbase'
 import type { RecordService } from 'pocketbase'
 
 export enum Collections {
+	ListEntries = "list_entries",
+	Lists = "lists",
 	Rating = "rating",
 	Users = "users",
 	Watches = "watches",
@@ -35,6 +37,16 @@ export type AuthSystemFields<T = never> = {
 
 // Record types for each collection
 
+export type ListEntriesRecord = {
+	field?: RecordIdString
+	media_id?: number
+}
+
+export type ListsRecord = {
+	field?: RecordIdString
+	name?: string
+}
+
 export type RatingRecord = {
 	media_id?: number
 	rating?: number
@@ -52,6 +64,8 @@ export type WatchesRecord = {
 }
 
 // Response types include system fields and match responses from the PocketBase API
+export type ListEntriesResponse<Texpand = unknown> = Required<ListEntriesRecord> & BaseSystemFields<Texpand>
+export type ListsResponse<Texpand = unknown> = Required<ListsRecord> & BaseSystemFields<Texpand>
 export type RatingResponse<Texpand = unknown> = Required<RatingRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
 export type WatchesResponse<Texpand = unknown> = Required<WatchesRecord> & BaseSystemFields<Texpand>
@@ -59,12 +73,16 @@ export type WatchesResponse<Texpand = unknown> = Required<WatchesRecord> & BaseS
 // Types containing all Records and Responses, useful for creating typing helper functions
 
 export type CollectionRecords = {
+	list_entries: ListEntriesRecord
+	lists: ListsRecord
 	rating: RatingRecord
 	users: UsersRecord
 	watches: WatchesRecord
 }
 
 export type CollectionResponses = {
+	list_entries: ListEntriesResponse
+	lists: ListsResponse
 	rating: RatingResponse
 	users: UsersResponse
 	watches: WatchesResponse
@@ -74,6 +92,8 @@ export type CollectionResponses = {
 // https://github.com/pocketbase/js-sdk#specify-typescript-definitions
 
 export type TypedPocketBase = PocketBase & {
+	collection(idOrName: 'list_entries'): RecordService<ListEntriesResponse>
+	collection(idOrName: 'lists'): RecordService<ListsResponse>
 	collection(idOrName: 'rating'): RecordService<RatingResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 	collection(idOrName: 'watches'): RecordService<WatchesResponse>

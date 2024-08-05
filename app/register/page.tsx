@@ -1,7 +1,7 @@
 
 import React from 'react'
 
-import { register } from '../../actions/auth_actions';
+import { register } from '../../actions/auth-actions';
 
 import AuthForm from '@/components/AuthForm';
 

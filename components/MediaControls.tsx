@@ -5,18 +5,22 @@ import StarIcon from "@mui/icons-material/Star";
 import { CircularProgress } from "@nextui-org/react";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import FavoriteRoundedIcon from '@mui/icons-material/FavoriteRounded';
+import FavoriteBorderRoundedIcon from '@mui/icons-material/FavoriteBorderRounded';
 import clsx from "clsx";
 
 import {
   setWatched,
+  setWishlisted,
   updateRating as updateRatingAction,
-} from "@/actions/diary_actions";
+} from "@/actions/diary-actions";
 interface MediaControlsProps {
   userId?: string;
   tmdbId: number;
   initialRating?: number;
   tmdbRating: number;
   watchedToday: boolean;
+  watchlisted: boolean
   className?: string;
 }
 
@@ -27,13 +31,17 @@ export default function MediaControls({
   tmdbRating,
   watchedToday,
   className,
+  watchlisted
 }: MediaControlsProps) {
   const [rating, setRating] = useState(initialRating ?? 0);
   const [watchedRecently, setWatchedRecently] = useState(watchedToday);
+  const [wishlisted, setWishlistedState] = useState(watchlisted);
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [windowWidth, setWindowWidth] = useState(0);
 
   useEffect(() => {
+    setWindowWidth(window.innerWidth)
+
     function handleResize() {
       setWindowWidth(window.innerWidth);
     }
@@ -62,7 +70,7 @@ export default function MediaControls({
   }
 
   return (
-    <div className={clsx("sm:flex p-4 sm:p-2 flex-row items-center", className)}>
+    <div className={clsx("sm:flex p-2 flex-row items-center", className)}>
       <Rating
           disabled={!userId}
           emptyIcon={
@@ -83,7 +91,7 @@ export default function MediaControls({
       <div className="flex">
         <CircularProgress
           aria-label="Average Rating"
-          className="mx-4"
+          className="mx-2"
           color={ratingColour}
           showValueLabel={true}
           size="lg"
@@ -91,6 +99,7 @@ export default function MediaControls({
         />
 
         <button
+          className="mx-2"
           disabled={!userId}
           onClick={async () => {
             const newValue = !watchedRecently;
@@ -100,6 +109,18 @@ export default function MediaControls({
           }}
         >
           {watchedRecently ? <VisibilityIcon /> : <VisibilityOutlinedIcon />}
+        </button>
+
+        <button 
+          className="mx-2"
+          disabled={!userId}
+          onClick={async () => {
+            const newValue = !wishlisted;
+
+            setWishlistedState(newValue);
+            await setWishlisted(tmdbId)
+          }}>
+          {wishlisted ? <FavoriteRoundedIcon htmlColor="red" /> : <FavoriteBorderRoundedIcon />}
         </button>
       </div>
     </div>

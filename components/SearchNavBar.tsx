@@ -3,7 +3,7 @@ import React from "react";
 
 import { SearchIcon } from "./icons";
 
-import { search } from "@/actions/search_actions";
+import { search } from "@/actions/search-actions";
 
 export default function SearchNavBar() {
   return (

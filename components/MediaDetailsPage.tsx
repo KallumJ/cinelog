@@ -8,7 +8,7 @@ import MediaHeader from "./MediaHeader";
 
 import { tmdb } from "@/lib/tmdb";
 import { createServerClient } from "@/lib/pocketbase";
-import { isWatchedToday } from "@/actions/diary_actions";
+import { isWatchedToday, isWatchlisted } from "@/actions/diary-actions";
 
 interface MediaDetailsPageProps {
   posterPath?: string;
@@ -42,6 +42,8 @@ export default async function MediaDetailsPage({
   }) : 0;
 
   const watchedToday = !!(await isWatchedToday(tmdbId));
+
+  const watchlisted = !!(await isWatchlisted(tmdbId));
   
   return (
     <div>
@@ -58,7 +60,7 @@ export default async function MediaDetailsPage({
           }}
         >
           <div className="absolute inset-0 bg-black opacity-50" />
-          <MediaHeader firstDate={firstDate} initialRating={existingRating} lastDate={lastDate} title={title} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={user_id} watchedToday={watchedToday}/>
+          <MediaHeader firstDate={firstDate}initialRating={existingRating} lastDate={lastDate} title={title} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={user_id} watchedToday={watchedToday} watchlisted={watchlisted}/>
         </div>
       </div>
       <div className="my-4">{children}</div>

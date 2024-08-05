@@ -93,3 +93,47 @@ export async function setWatched(tmdbId: number) {
     });
   }
 }
+
+export async function isWatchlisted(tmdbId: number) {
+  const pb = createServerClient(cookies());
+
+  if (!pb.authStore.isValid)
+    throw new NotAuthenticatedError("Can not get watched if the user is not authenticated")
+
+  const usersWishlist = await pb.collection("lists").getFirstListItem(pb.filter("user_id={:user_id} && name=\"watchlist\"", { user_id: pb.authStore.model?.id }))
+
+  try {
+    const watchlisted = await pb.collection("list_entries").getFirstListItem(pb.filter("list={:list_id} && media_id={:media_id}", { media_id: tmdbId, list_id: usersWishlist.id}))
+    
+    return watchlisted
+  } catch (e) {
+    if ((e instanceof ClientResponseError && e.status === 404) || e instanceof NotAuthenticatedError) {
+      return null;
+    } else {
+      throw e;
+    }
+  }
+
+  return 
+}
+
+export async function setWishlisted(tmdbId: number) {
+  const pb = createServerClient(cookies());
+  
+  if (!pb.authStore.isValid)
+    throw new NotAuthenticatedError("Can not get watched if the user is not authenticated")
+
+  const usersWishlist = await pb.collection("lists").getFirstListItem(pb.filter("user_id={:user_id} && name=\"watchlist\"", { user_id: pb.authStore.model?.id }))
+
+  const watchlisted = await isWatchlisted(tmdbId)
+
+  if (!watchlisted) {
+    await pb.collection("list_entries").create({
+      list: usersWishlist.id,
+      media_id: tmdbId
+    })
+  } else {
+    await pb.collection("list_entries").delete(watchlisted.id)
+  }
+
+}

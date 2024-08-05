@@ -20,7 +20,7 @@ import React, { useState } from "react";
 import MovieIcon from "@mui/icons-material/Movie";
 import clsx from "clsx";
 
-import { logout } from "../actions/auth_actions";
+import { logout } from "../actions/auth-actions";
 
 import SearchNavBar from "./SearchNavBar";
 

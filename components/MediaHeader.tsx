@@ -16,6 +16,7 @@ interface MediaHeaderProps {
   initialRating?: number
   tmdbRating: number;
   watchedToday: boolean;
+  watchlisted: boolean
 }
 
 export default function MediaHeader({
@@ -26,13 +27,14 @@ export default function MediaHeader({
   tmdbId,
   initialRating,
   tmdbRating,
-  watchedToday
+  watchedToday,
+  watchlisted
 }: MediaHeaderProps) {
   const dateStr = !lastDate ? getYearFromDateString(firstDate) : `${getYearFromDateString(firstDate)}-${getYearFromDateString(lastDate)}`
 
   return (
     <Card className="p-2 sm:p-6">
-      <MediaControls initialRating={initialRating} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={userId} watchedToday={watchedToday}/>
+      <MediaControls initialRating={initialRating}tmdbId={tmdbId} tmdbRating={tmdbRating} userId={userId} watchedToday={watchedToday} watchlisted={watchlisted}/>
       <h1 className="md:text-6xl sm:text-5xl text-lg font-bold">
         {title}{" "}
         <span className="dark:text-gray-500 md:text-2xl sm:text-xl text-sm">{dateStr}</span>
