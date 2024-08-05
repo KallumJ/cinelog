@@ -56,8 +56,9 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
     const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
 
     const anyProviders = Object.keys(providers?.results ?? {}).length > 0;
+
     if (!anyProviders)
-        return <h1 className="text-2xl py-8">No providers available in any region</h1>
+        return <><h1 className="text-2xl font-bold mb-4">Providers</h1><h1 className="text-2xl mb-8">No providers available in any region</h1></>
 
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 
