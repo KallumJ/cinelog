@@ -41,9 +41,9 @@ export default async function Movie({
         imdbId={movie.imdb_id}
         mediaType="movies"
         productionCompanies={movie.production_companies}
+        providers={watchProviders}
         tagline={movie.tagline}
         title={movie.title}
-        providers={watchProviders}
       />
     </MediaDetailsPage>
   );

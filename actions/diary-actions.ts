@@ -10,6 +10,9 @@ import { NotAuthenticatedError } from "../types/errors";
 export async function updateRating(tmdbId: number, rating: number) {
   const pb = createServerClient(cookies());
 
+  if (!pb.authStore.isValid)
+    throw new NotAuthenticatedError("Can not update rating if user is not authenticated")
+
   const ratingRecord = {
     user_id: pb.authStore.model?.id,
     media_id: tmdbId,
@@ -39,7 +42,7 @@ export async function isWatchedToday(tmdbId: number) {
 
   try {
     if (!pb.authStore.isValid)
-        throw new NotAuthenticatedError("Can not get watched if the user is not authenticated")
+        return false;
 
     const now = new Date();
     const dawn = new Date(
@@ -82,6 +85,9 @@ export async function isWatchedToday(tmdbId: number) {
 export async function setWatched(tmdbId: number) {
   const pb = createServerClient(cookies());
 
+  if (!pb.authStore.isValid)
+    throw new NotAuthenticatedError("Can not set as watched if user is not authenticated")
+
   const alreadyWatchedToday = await isWatchedToday(tmdbId);
 
   if (alreadyWatchedToday) {
@@ -98,7 +104,7 @@ export async function isWatchlisted(tmdbId: number) {
   const pb = createServerClient(cookies());
 
   if (!pb.authStore.isValid)
-    throw new NotAuthenticatedError("Can not get watched if the user is not authenticated")
+    return false;
 
   const usersWishlist = await pb.collection("lists").getFirstListItem(pb.filter("user_id={:user_id} && name=\"watchlist\"", { user_id: pb.authStore.model?.id }))
 
