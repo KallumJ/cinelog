@@ -7,16 +7,13 @@ import "react-multi-carousel/lib/styles.css";
 
 import { Metadata, Viewport } from "next";
 import clsx from "clsx";
-import { cookies } from "next/headers";
 import Script from "next/script";
-
-import { createServerClient } from "../lib/pocketbase";
 
 import { Providers } from "./providers";
 
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
-import NavBar from "@/components/NavBar";
+import NavBar from "@/components/NavBar/NavBar";
 
 export const metadata: Metadata = {
   title: {
@@ -42,8 +39,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const prod = process.env.NODE_ENV === "production";
-
-  const pb = createServerClient(cookies());
 
   return (
     <html suppressHydrationWarning lang="en">
@@ -73,8 +68,6 @@ export default async function RootLayout({
             <main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
               <NavBar
                 className="mb-6"
-                email={pb.authStore.model?.email}
-                isAuthenticated={pb.authStore.isValid}
               />
               <div className="mt-16">{children}</div>
             </main>

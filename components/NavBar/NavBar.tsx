@@ -20,19 +20,14 @@ import React, { useState } from "react";
 import MovieIcon from "@mui/icons-material/Movie";
 import clsx from "clsx";
 
-import { logout } from "../actions/auth-actions";
-
-import SearchNavBar from "./SearchNavBar";
+import SearchNavBar from "../SearchNavBar";
+import NavBarAuth from "./NavBarAuth";
 
 interface NavBarProps {
-  isAuthenticated: boolean;
-  email?: string;
   className?: string;
 }
 
 export default function NavBar({
-  isAuthenticated,
-  email,
   className,
 }: NavBarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -80,45 +75,7 @@ export default function NavBar({
       >
         <SearchNavBar />
       </NavbarContent>
-      {isAuthenticated ? (
-        <NavbarContent as="div" justify="end">
-          <Dropdown placement="bottom-end">
-            <DropdownTrigger>
-              <Avatar
-                isBordered
-                showFallback
-                as="button"
-                className="transition-transform"
-                size="sm"
-              />
-            </DropdownTrigger>
-            <DropdownMenu aria-label="Profile Actions" variant="flat">
-              <DropdownItem key="profile" className="h-14 gap-2">
-                <p className="font-semibold">Signed in as</p>
-                <p className="font-semibold">{email}</p>
-              </DropdownItem>
-              <DropdownItem key="logout" color="danger">
-                <form action={logout}>
-                  <button className="w-full h-full" type="submit">
-                    Log Out
-                  </button>
-                </form>
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
-        </NavbarContent>
-      ) : (
-        <NavbarContent justify="end">
-          <NavbarItem className="hidden lg:flex">
-            <Link href="/login">Login</Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Button as={Link} color="primary" href="/register" variant="flat">
-              Sign Up
-            </Button>
-          </NavbarItem>
-        </NavbarContent>
-      )}
+      <NavBarAuth />
       <NavbarMenu className="my-6">
         <NavbarMenuItem
           className="sm:hidden block"
