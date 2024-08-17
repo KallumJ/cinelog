@@ -1,7 +1,6 @@
 import { NavbarContent, NavbarItem } from "@nextui-org/navbar";
 import {
   Avatar,
-  Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
@@ -64,11 +63,6 @@ export default function NavBarAuth() {
         <NavbarContent justify="end">
           <NavbarItem className="hidden lg:flex">
             <Link href="/api/auth/signin">Login</Link>
-          </NavbarItem>
-          <NavbarItem>
-            <Button as={Link} color="primary" href="/register" variant="flat">
-              Sign Up
-            </Button>
           </NavbarItem>
         </NavbarContent>
       )}
