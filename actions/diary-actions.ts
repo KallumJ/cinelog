@@ -1,145 +1,82 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { ClientResponseError } from "pocketbase";
-
-import { createServerClient } from "../lib/pocketbase";
-import { formatDate } from "../lib/utils";
 import { NotAuthenticatedError } from "../types/errors";
+import { prisma } from "../prisma/index";
+import { getNextServerSession } from "../lib/auth";
+import { getOrCreateWishlist, isWatchedToday } from "../lib/db";
 
-export async function updateRating(tmdbId: number, rating: number) {
-  const pb = createServerClient(cookies());
+export async function updateRating(mediaId: number, rating: number) {
+  const session = await getNextServerSession();
 
-  if (!pb.authStore.isValid)
-    throw new NotAuthenticatedError("Can not update rating if user is not authenticated")
-
-  const ratingRecord = {
-    user_id: pb.authStore.model?.id,
-    media_id: tmdbId,
-    rating,
-  };
-
-  try {
-    const existingRating = await pb.collection("rating").getFirstListItem(
-      pb.filter("user_id={:user_id} && media_id={:media_id}", {
-        user_id: pb.authStore.model?.id,
-        media_id: tmdbId,
-      })
+  if (!session)
+    throw new NotAuthenticatedError(
+      "Can not update rating if user is not authenticated"
     );
 
-    await pb.collection("rating").update(existingRating.id, ratingRecord);
-  } catch (e) {
-    if (e instanceof ClientResponseError && e.status === 404) {
-      await pb.collection("rating").create(ratingRecord);
-    } else {
-      throw e;
-    }
-  }
+  const existingRating = await prisma.rating.findFirst({
+    where: { userId: session.user.id, mediaId },
+  });
+
+  await prisma.rating.upsert({
+    where: { id: existingRating?.id ?? 0 },
+    update: { rating },
+    create: { mediaId, userId: session.user.id, rating },
+  });
 }
 
-export async function isWatchedToday(tmdbId: number) {
-  const pb = createServerClient(cookies());
+export async function setWatched(mediaId: number) {
+  const session = await getNextServerSession();
 
-  try {
-    if (!pb.authStore.isValid)
-        return false;
-
-    const now = new Date();
-    const dawn = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      0,
-      0,
-      0
-    );
-    const dusk = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      23,
-      59,
-      59
+  if (!session)
+    throw new NotAuthenticatedError(
+      "Can not set as watched if user is not authenticated"
     );
 
-    return await pb.collection("watches").getFirstListItem(
-      pb.filter(
-        "user_id={:user_id} && media_id={:media_id} && created >= {:dawn} && created <= {:dusk}",
-        {
-          user_id: pb.authStore.model?.id,
-          media_id: tmdbId,
-          dawn: formatDate(dawn),
-          dusk: formatDate(dusk),
-        }
-      )
-    );
-  } catch (e) {
-    if ((e instanceof ClientResponseError && e.status === 404) || e instanceof NotAuthenticatedError) {
-      return null;
-    } else {
-      throw e;
-    }
-  }
-}
-
-export async function setWatched(tmdbId: number) {
-  const pb = createServerClient(cookies());
-
-  if (!pb.authStore.isValid)
-    throw new NotAuthenticatedError("Can not set as watched if user is not authenticated")
-
-  const alreadyWatchedToday = await isWatchedToday(tmdbId);
+  const alreadyWatchedToday = await isWatchedToday(mediaId);
 
   if (alreadyWatchedToday) {
-    await pb.collection("watches").delete(alreadyWatchedToday.id);
+    await prisma.watch.delete({ where: { id: alreadyWatchedToday.id } });
   } else {
-    await pb.collection("watches").create({
-      user_id: pb.authStore.model?.id,
-      media_id: tmdbId,
+    await prisma.watch.create({
+      data: {
+        userId: session.user.id,
+        media_id: mediaId,
+      },
     });
   }
 }
 
-export async function isWatchlisted(tmdbId: number) {
-  const pb = createServerClient(cookies());
+export async function isWatchlisted(mediaId: number) {
+  const session = await getNextServerSession();
 
-  if (!pb.authStore.isValid)
-    return false;
+  if (!session) return false;
 
-  const usersWishlist = await pb.collection("lists").getFirstListItem(pb.filter("user_id={:user_id} && name=\"watchlist\"", { user_id: pb.authStore.model?.id }))
+  const wishlist = await getOrCreateWishlist();
 
-  try {
-    const watchlisted = await pb.collection("list_entries").getFirstListItem(pb.filter("list={:list_id} && media_id={:media_id}", { media_id: tmdbId, list_id: usersWishlist.id}))
-    
-    return watchlisted
-  } catch (e) {
-    if ((e instanceof ClientResponseError && e.status === 404) || e instanceof NotAuthenticatedError) {
-      return null;
-    } else {
-      throw e;
-    }
-  }
+  const watchlisted = await prisma.listEntries.findFirst({
+    where: { listId: wishlist?.id, mediaId: mediaId },
+  });
 
-  return 
+  return watchlisted;
 }
 
-export async function setWishlisted(tmdbId: number) {
-  const pb = createServerClient(cookies());
-  
-  if (!pb.authStore.isValid)
-    throw new NotAuthenticatedError("Can not get watched if the user is not authenticated")
+export async function setWishlisted(mediaId: number) {
+  const session = await getNextServerSession();
 
-  const usersWishlist = await pb.collection("lists").getFirstListItem(pb.filter("user_id={:user_id} && name=\"watchlist\"", { user_id: pb.authStore.model?.id }))
+  if (!session)
+    throw new NotAuthenticatedError(
+      "Can not get watched if the user is not authenticated"
+    );
 
-  const watchlisted = await isWatchlisted(tmdbId)
+  const wishlist = await getOrCreateWishlist();
+
+  const watchlisted = await isWatchlisted(mediaId);
 
   if (!watchlisted) {
-    await pb.collection("list_entries").create({
-      list: usersWishlist.id,
-      media_id: tmdbId
-    })
+    await prisma.listEntries.create({
+      data: { listId: wishlist.id, mediaId: mediaId },
+    });
   } else {
-    await pb.collection("list_entries").delete(watchlisted.id)
+    await prisma.listEntries.delete({ where: { id: watchlisted.id } });
   }
-
 }
