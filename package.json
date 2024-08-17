@@ -16,6 +16,7 @@
 		"@mui/icons-material": "^5.16.4",
 		"@mui/lab": "^5.0.0-alpha.173",
 		"@mui/material": "^5.16.5",
+		"@next-auth/prisma-adapter": "^1.0.7",
 		"@nextui-org/button": "2.0.37",
 		"@nextui-org/code": "2.0.32",
 		"@nextui-org/input": "2.2.4",
