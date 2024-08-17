@@ -1,14 +1,14 @@
 import React, { ReactNode } from "react";
 import { PosterSize } from "tmdb-ts";
-import { cookies } from "next/headers";
-import { ClientResponseError } from "pocketbase";
 
 import Poster from "./Poster";
 import MediaHeader from "./MediaHeader";
 
 import { tmdb } from "@/lib/tmdb";
-import { createServerClient } from "@/lib/pocketbase";
-import { isWatchedToday, isWatchlisted } from "@/actions/diary-actions";
+import { isWatchlisted } from "@/actions/diary-actions";
+import { isWatchedToday } from "@/lib/db";
+import { prisma } from "@/prisma/index";
+import { getNextServerSession } from "@/lib/auth";
 
 interface MediaDetailsPageProps {
   posterPath?: string;
@@ -31,19 +31,19 @@ export default async function MediaDetailsPage({
   tmdbId,
   tmdbRating
 }: MediaDetailsPageProps) {
-  const pb = createServerClient(cookies())
-
-  const user_id = pb.authStore.model?.id
+  const session = await getNextServerSession();
   
-  const existingRating = user_id ? await pb.collection("rating").getFirstListItem(pb.filter("user_id={:user_id} && media_id={:tmdb_id}", { user_id, tmdb_id: tmdbId })).then(res => res.rating).catch(err => {
-    if (!(err instanceof ClientResponseError && err.status == 404)) console.error(err);
+  const existingRating = await prisma.rating.findFirst({ where: { userId: session?.user.id, mediaId: tmdbId }});
 
-    return 0;
-  }) : 0;
+  let watchedToday = false;
 
-  const watchedToday = !!(await isWatchedToday(tmdbId));
+  if (session)
+    watchedToday = !!(await isWatchedToday(tmdbId));
+  
+  let watchlisted = false;
 
-  const watchlisted = !!(await isWatchlisted(tmdbId));
+  if (session)
+    watchlisted = !!(await isWatchlisted(tmdbId));
   
   return (
     <div>
@@ -60,7 +60,7 @@ export default async function MediaDetailsPage({
           }}
         >
           <div className="absolute inset-0 bg-black opacity-50" />
-          <MediaHeader firstDate={firstDate}initialRating={existingRating} lastDate={lastDate} title={title} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={user_id} watchedToday={watchedToday} watchlisted={watchlisted}/>
+          <MediaHeader firstDate={firstDate} initialRating={existingRating?.rating.toNumber()} lastDate={lastDate} title={title} tmdbId={tmdbId} tmdbRating={tmdbRating} userId={session?.user.id} watchedToday={watchedToday} watchlisted={watchlisted}/>
         </div>
       </div>
       <div className="my-4">{children}</div>
