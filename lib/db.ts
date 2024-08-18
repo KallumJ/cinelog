@@ -63,3 +63,28 @@ export async function getOrCreateWishlist() {
 
   return wishlist;
 }
+
+export async function setWishlisted(mediaId: number) {
+
+  const wishlist = await getOrCreateWishlist();
+
+  const watchlisted = await isWatchlisted(mediaId);
+
+  if (!watchlisted) {
+    await prisma.listEntries.create({
+      data: { listId: wishlist.id, mediaId: mediaId },
+    });
+  } else {
+    await prisma.listEntries.delete({ where: { id: watchlisted.id } });
+  }
+}
+
+export async function isWatchlisted(mediaId: number) {
+  const wishlist = await getOrCreateWishlist();
+
+  const watchlisted = await prisma.listEntries.findFirst({
+    where: { listId: wishlist?.id, mediaId: mediaId },
+  });
+
+  return watchlisted;
+}

@@ -3,7 +3,7 @@
 import { NotAuthenticatedError } from "../types/errors";
 import { prisma } from "../prisma/index";
 import { getNextServerSession } from "../lib/auth";
-import { getOrCreateWishlist, isWatchedToday } from "../lib/db";
+import * as db from "../lib/db";
 
 export async function updateRating(mediaId: number, rating: number) {
   const session = await getNextServerSession();
@@ -32,7 +32,7 @@ export async function setWatched(mediaId: number) {
       "Can not set as watched if user is not authenticated"
     );
 
-  const alreadyWatchedToday = await isWatchedToday(mediaId);
+  const alreadyWatchedToday = await db.isWatchedToday(mediaId);
 
   if (alreadyWatchedToday) {
     await prisma.watch.delete({ where: { id: alreadyWatchedToday.id } });
@@ -47,36 +47,9 @@ export async function setWatched(mediaId: number) {
 }
 
 export async function isWatchlisted(mediaId: number) {
-  const session = await getNextServerSession();
-
-  if (!session) return false;
-
-  const wishlist = await getOrCreateWishlist();
-
-  const watchlisted = await prisma.listEntries.findFirst({
-    where: { listId: wishlist?.id, mediaId: mediaId },
-  });
-
-  return watchlisted;
+  return db.isWatchlisted(mediaId);
 }
 
 export async function setWishlisted(mediaId: number) {
-  const session = await getNextServerSession();
-
-  if (!session)
-    throw new NotAuthenticatedError(
-      "Can not get watched if the user is not authenticated"
-    );
-
-  const wishlist = await getOrCreateWishlist();
-
-  const watchlisted = await isWatchlisted(mediaId);
-
-  if (!watchlisted) {
-    await prisma.listEntries.create({
-      data: { listId: wishlist.id, mediaId: mediaId },
-    });
-  } else {
-    await prisma.listEntries.delete({ where: { id: watchlisted.id } });
-  }
+  return db.setWishlisted(mediaId)
 }
