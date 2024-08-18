@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Link, Radio, RadioGroup } from "@nextui-org/react";
 import React, { useState } from "react";
@@ -11,6 +11,7 @@ import {
   WatchLocale,
   WatchProviders as WatchProvidersType,
 } from "tmdb-ts";
+import { Image } from "@nextui-org/image";
 
 import MediaAvatar from "./MediaAvatar";
 
@@ -49,16 +50,11 @@ interface Provider {
 }
 
 export default function WatchProviders({ providers }: WatchProvidersProps) {
-    const DEFAULT_REGION = "GB";
-    const DEFAULT_CATEGORY = ProviderCategory.STREAM;
+  const DEFAULT_REGION = "GB";
+  const DEFAULT_CATEGORY = ProviderCategory.STREAM;
 
-    const [selectedCountry, setSelectedCountry] = useState(DEFAULT_REGION);
-    const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
-
-    const anyProviders = Object.keys(providers?.results ?? {}).length > 0;
-
-    if (!anyProviders)
-        return <><h1 className="text-2xl font-bold mb-4">Providers</h1><h1 className="text-2xl mb-8">No providers available in any region</h1></>
+  const [selectedCountry, setSelectedCountry] = useState(DEFAULT_REGION);
+  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORY);
 
   const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 
@@ -90,36 +86,64 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
     },
   };
 
-  const countries: ProviderCountry[] = Object.keys(providers.results)
-    .map((p) => {
-      return {
-        countryCode: p,
-        countryName: regionNames.of(p) ?? "Unknown",
-        flag: getFlagEmojiForCountryCode(p),
-      };
-    })
-    .sort((a, b) => sortAlphabetically(a.countryName, b.countryName));
+  const anyProviders = Object.keys(providers?.results ?? {}).length > 0;
 
-  const { link, rent, flatrate, buy }: Provider =
-    providers.results[selectedCountry as keyof WatchLocale] ?? {};
+  let detailsLink: string = "";
+  let filteredData: CarouselData[] = [];
+  let countries: ProviderCountry[] = [];
 
-  const carouselData: CarouselData[] = [
-    ...(rent ?? []).map(
-      (r) => ({ ...r, type: ProviderCategory.RENT }) as CarouselData
-    ),
-    ...(flatrate ?? []).map(
-      (f) => ({ ...f, type: ProviderCategory.STREAM }) as CarouselData
-    ),
-    ...(buy ?? []).map(
-      (b) => ({ ...b, type: ProviderCategory.BUY }) as CarouselData
-    ),
-  ];
+  if (anyProviders) {
+    countries = Object.keys(providers.results)
+      .map((p) => {
+        return {
+          countryCode: p,
+          countryName: regionNames.of(p) ?? "Unknown",
+          flag: getFlagEmojiForCountryCode(p),
+        };
+      })
+      .sort((a, b) => sortAlphabetically(a.countryName, b.countryName));
 
-  const filteredData = carouselData.filter((d) => d.type === selectedCategory);
+    const { link, rent, flatrate, buy }: Provider =
+      providers.results[selectedCountry as keyof WatchLocale] ?? {};
+
+    detailsLink = link;
+    const carouselData: CarouselData[] = [
+      ...(rent ?? []).map(
+        (r) => ({ ...r, type: ProviderCategory.RENT }) as CarouselData
+      ),
+      ...(flatrate ?? []).map(
+        (f) => ({ ...f, type: ProviderCategory.STREAM }) as CarouselData
+      ),
+      ...(buy ?? []).map(
+        (b) => ({ ...b, type: ProviderCategory.BUY }) as CarouselData
+      ),
+    ];
+
+    filteredData = carouselData.filter((d) => d.type === selectedCategory);
+  }
 
   return (
     <div>
-          <h1 className="text-2xl font-bold mb-4">Providers</h1>
+      <span className="flex items-center">
+        <h1 className="text-2xl font-bold">Providers</h1>
+        <Image
+          className="mx-4"
+          src="https://www.themoviedb.org/assets/2/v4/logos/justwatch-c2e58adf5809b6871db650fb74b43db2b8f3637fe3709262572553fa056d8d0a.svg"
+          width={100}
+        />
+      </span>
+      <p className="my-2">
+        Information about watch providers is provided by{" "}
+        <Link href="https://www.justwatch.com">JustWatch</Link>.{" "}
+        <Link href="https://www.justwatch.com">JustWatch</Link> helps you easily
+        discover where to legally stream your favorite movies and TV shows
+        online. For more details, visit{" "}
+        <Link href="https://www.justwatch.com">JustWatch</Link>. For further
+        attribution, see our <Link href="/attribution">attribution page</Link>.
+      </p>
+      {anyProviders ? (
+        <>
+          {" "}
           <div className="flex gap-8 flex-row items-center">
             <select
               className="select select-bordered w-full max-w-xs p-2"
@@ -142,7 +166,7 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
               <Radio value={ProviderCategory.RENT}>Rent</Radio>
               <Radio value={ProviderCategory.BUY}>Buy</Radio>
             </RadioGroup>
-            <Link href={link}>Click here for more details</Link>
+            <Link href={detailsLink}>Click here for more details</Link>
           </div>
           {filteredData.length == 0 ? (
             <p className="text-xl my-6">
@@ -165,6 +189,10 @@ export default function WatchProviders({ providers }: WatchProvidersProps) {
               />
             ))}
           </Carousel>
-        </div>
+        </>
+      ) : (
+        <h1 className="text-2xl my-8">No providers available in any region</h1>
+      )}
+    </div>
   );
 }

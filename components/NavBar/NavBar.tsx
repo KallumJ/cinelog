@@ -31,6 +31,7 @@ export default function NavBar({
     { name: "Release Schedule", href: "#" },
     { name: "Diary", href: "#" },
     { name: "Watchlist", href: "#" },
+    { name: "Attribution", href: "/attribution"}
   ];
 
   return (
