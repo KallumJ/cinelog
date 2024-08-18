@@ -88,6 +88,6 @@ export default function MediaCastList({ credits, createdBy }: MediaCastListProps
   );
 
   return (
-    <Carousel responsive={responsive}>{creditList}</Carousel>
+    <Carousel className="-z-0" responsive={responsive}>{creditList}</Carousel>
   );
 }
