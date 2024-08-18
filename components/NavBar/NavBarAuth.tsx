@@ -40,6 +40,7 @@ export default function NavBarAuth() {
                 as="button"
                 className="transition-transform"
                 size="sm"
+                src={session.user.image ?? undefined}
               />
             </DropdownTrigger>
             <DropdownMenu aria-label="Profile Actions" variant="flat">
