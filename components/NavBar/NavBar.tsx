@@ -1,12 +1,6 @@
 "use client";
 
 import {
-  Avatar,
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Link,
   Navbar,
   NavbarBrand,
@@ -21,6 +15,7 @@ import MovieIcon from "@mui/icons-material/Movie";
 import clsx from "clsx";
 
 import SearchNavBar from "../SearchNavBar";
+
 import NavBarAuth from "./NavBarAuth";
 
 interface NavBarProps {
@@ -94,6 +89,16 @@ export default function NavBar({
             </Link>
           </NavbarMenuItem>
         ))}
+          <NavbarMenuItem key="signin" className="inline-flex">
+            <Link
+              className="w-full"
+              color="foreground"
+              href="/api/auth/signin"
+              size="lg"
+            >
+              Login
+            </Link>
+          </NavbarMenuItem>
       </NavbarMenu>
     </Navbar>
   );
