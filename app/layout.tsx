@@ -45,13 +45,13 @@ export default async function RootLayout({
       <head>
         {prod ? (
           <Script
-            data-website-id="453757b5-cab5-47bf-ac14-aa66208bcf7c"
+            data-website-id="760e8649-7253-4e00-91e3-2c338562cc67"
             src="https://umami.aurora.kallumj.xyz/script.js"
             strategy="beforeInteractive"
           />
         ) : (
           <Script
-            data-website-id="9b15fa2d-edf4-46f3-bd91-3e886d427fc4"
+            data-website-id="e805896a-be2f-47c7-b9f1-e327a98042e9"
             src="https://umami.aurora.kallumj.xyz/script.js"
             strategy="beforeInteractive"
           />
