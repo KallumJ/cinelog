@@ -1,53 +1,38 @@
-# Next.js & NextUI Template
+# sv
 
-This is a template for creating applications using Next.js 14 (app directory) and NextUI (v2).
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-[Try it on CodeSandbox](https://githubbox.com/nextui-org/next-app-template)
+## Creating a project
 
-## Technologies Used
-
-- [Next.js 14](https://nextjs.org/docs/getting-started)
-- [NextUI v2](https://nextui.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
-
-## How to Use
-
-### Use the template with create-next-app
-
-To create a new project based on this template using `create-next-app`, run the following command:
+If you're seeing this, you've probably already done this step. Congrats!
 
 ```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
+# create a new project in the current directory
+npx sv create
+
+# create a new project in my-app
+npx sv create my-app
 ```
 
-### Install dependencies
+## Developing
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
-
-```bash
-npm install
-```
-
-### Run the development server
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
 ```bash
 npm run dev
+
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-### Setup pnpm (optional)
+## Building
 
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+To create a production version of your app:
 
 ```bash
-public-hoist-pattern[]=*@nextui-org/*
+npm run build
 ```
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+You can preview the production build with `npm run preview`.
 
-## License
-
-Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
