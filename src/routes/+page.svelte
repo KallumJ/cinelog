@@ -1,8 +1,6 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
-	import { PosterSize } from 'tmdb-ts';
 	import type { HomePageProps } from './+page.server';
-	import { getSrcForPath } from '$lib/tmdb/utils';
 	import MediaPoster from '$lib/components/media/MediaPoster.svelte';
 
 	let { data }: { data: HomePageProps } = $props();
