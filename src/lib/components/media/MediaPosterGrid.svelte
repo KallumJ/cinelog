@@ -7,6 +7,6 @@
 
 <div class="m-4 grid grid-cols-2 gap-4 sm:grid-cols-5 sm:gap-4">
 	{#each media as { title, posterPath }}
-		<MediaPoster {title} poster_path={posterPath} />
+		<MediaPoster {title} {posterPath} />
 	{/each}
 </div>
