@@ -1,7 +1,9 @@
 <script lang="ts">
 	import * as Tabs from '$lib/components/ui/tabs';
 	import type { HomePageProps } from './+page.server';
-	import MediaPoster from '$lib/components/media/MediaPoster.svelte';
+	import MediaPosterGrid from '$lib/components/media/MediaPosterGrid.svelte';
+	import { MediaType } from '$lib/tmdb/types';
+	import { parseMediaArray } from '$lib/tmdb/utils';
 
 	let { data }: { data: HomePageProps } = $props();
 </script>
@@ -13,18 +15,10 @@
 	</Tabs.List>
 
 	<Tabs.Content value="movies" class="mt-4">
-		<div class="m-4 grid grid-cols-2 gap-4 sm:grid-cols-5 sm:gap-4">
-			{#each data.movies.results as { title, poster_path }}
-				<MediaPoster {title} {poster_path} />
-			{/each}
-		</div>
+		<MediaPosterGrid media={parseMediaArray(data.movies.results)} />
 	</Tabs.Content>
 
 	<Tabs.Content value="tv" class="mt-4">
-		<div class="m-4 grid grid-cols-2 gap-4 sm:grid-cols-5 sm:gap-4">
-			{#each data.tvShows.results as { name, poster_path }}
-				<MediaPoster title={name} {poster_path} />
-			{/each}
-		</div>
+		<MediaPosterGrid media={parseMediaArray(data.tvShows.results)} />
 	</Tabs.Content>
 </Tabs.Root>
