@@ -2,7 +2,6 @@
 	import * as Tabs from '$lib/components/ui/tabs';
 	import type { HomePageProps } from './+page.server';
 	import MediaPosterGrid from '$lib/components/media/MediaPosterGrid.svelte';
-	import { MediaType } from '$lib/tmdb/types';
 	import { parseMediaArray } from '$lib/tmdb/utils';
 
 	let { data }: { data: HomePageProps } = $props();
