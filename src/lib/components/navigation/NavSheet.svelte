@@ -8,8 +8,8 @@
 
 <span class="m-4 flex items-center gap-4">
 	<span class="flex items-center gap-2">
-		<Clapperboard />
-		<h1 class="text-xl font-bold">Cinelog</h1>
+		<Clapperboard size={32}/>
+		<h1 class="text-3xl font-bold">Cinelog</h1>
 	</span>
 	<div class="ml-auto">
 		<Sheet.Root>
