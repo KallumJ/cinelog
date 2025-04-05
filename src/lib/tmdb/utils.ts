@@ -2,6 +2,9 @@ import type { Movie, TV } from 'tmdb-ts';
 import { MediaType, type Media } from './types';
 
 export function getSrcForPath(backdrop: string, size: string) {
+    if (backdrop === null) 
+            return null;
+
 	return `https://image.tmdb.org/t/p/${size}${backdrop}`;
 }
 
