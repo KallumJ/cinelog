@@ -4,8 +4,8 @@
 	import { BackdropSize, ProfileSize } from 'tmdb-ts';
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
-	import * as Carousel from '$lib/components/ui/carousel';
 	import * as Avatar from '$lib/components/ui/avatar';
+	import * as Carousel from '$lib/components/ui/carousel';
 	import { cn, extractInitials } from '$lib/utils';
 	import CastAvatar from './CastAvatar.svelte';
 
@@ -74,24 +74,24 @@
 				</ul>
 			</div>
 		</div>
-		<div>
-			<Carousel.Root opts={{
-				
-			}}>
-				<Carousel.Content>
-					{#each createdBy as credit}
-						<Carousel.Item class="basis-1/4 sm:basis-1/5 xl:basis-1/12">
-							<CastAvatar {credit} />
-						</Carousel.Item>
-					{/each}
-					{#each cast as credit}
-						<Carousel.Item class="basis-1/4 sm:basis-1/5 xl:basis-1/12">
-							<CastAvatar {credit} />
+		<div class="w-full max-w-4xl sm:max-w-max mx-auto px-1 md:px-8 py-4 relative">
+			<Carousel.Root class="w-full">
+				<Carousel.Content class="-ml-4">
+					{#each [...createdBy, ...cast, ...crew] as { profilePath, name, role }}
+						<Carousel.Item class="basis-auto pl-4">
+							<div class="flex flex-col items-center p-1 text-center">
+								<Avatar.Root class="mb-2 h-20 w-20">
+									<Avatar.Image src={getSrcForPath(profilePath, ProfileSize.W185)} alt={name} />
+									<Avatar.Fallback>{extractInitials(name)}</Avatar.Fallback>
+								</Avatar.Root>
+								<span class="text-md block font-semibold">{name}</span>
+								<span class="block text-sm text-muted-foreground">{role}</span>
+							</div>
 						</Carousel.Item>
 					{/each}
 				</Carousel.Content>
-				<Carousel.Previous />
-				<Carousel.Next />
+				<Carousel.Previous class="absolute left-2 md:-left-10 top-1/2 -translate-y-1/2 z-10 hidden md:inline-flex" />
+				<Carousel.Next class="absolute right-2 md:-right-10 top-1/2 -translate-y-1/2 z-10 hidden md:inline-flex" />
 			</Carousel.Root>
 		</div>
 	</Card.Root>
