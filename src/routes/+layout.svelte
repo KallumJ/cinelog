@@ -8,5 +8,6 @@
 
 <ModeWatcher />
 <NavSheet />
-
-{@render children?.()}
+<div class="mx-8">
+	{@render children?.()}
+</div>

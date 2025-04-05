@@ -1,5 +1,6 @@
 import type { Movie, TV } from 'tmdb-ts';
 import { MediaType, type Media } from './types';
+import { getDateFromString, getYearFromDateString } from '$lib/utils';
 
 export function getSrcForPath(backdrop: string, size: string) {
     if (backdrop === null) 
@@ -24,7 +25,10 @@ const convertMovie = (m: Movie): Media => ({
 	title: m.title,
 	posterPath: m.poster_path,
 	type: MediaType.Movie,
-    tmdbId: m.id
+    tmdbId: m.id,
+    backdropPath: m.backdrop_path,
+    initalReleaseDate: getDateFromString(m.release_date),
+    initalReleaseYear: getYearFromDateString(m.release_date)
 });
 
 // Helper function to convert a single TV show to Media
@@ -32,7 +36,10 @@ const convertTV = (t: TV): Media => ({
 	title: t.name, // Use 'name' for TV shows
 	posterPath: t.poster_path,
 	type: MediaType.Tv,
-    tmdbId: t.id
+    tmdbId: t.id,
+    backdropPath: t.backdrop_path,
+    initalReleaseDate: getDateFromString(t.first_air_date),
+    initalReleaseYear: getYearFromDateString(t.first_air_date)
 });
 
 export function parseMediaArray(data: unknown): Media[] {
