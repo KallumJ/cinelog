@@ -5,8 +5,9 @@
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Carousel from '$lib/components/ui/carousel';
-	import * as Avatar from "$lib/components/ui/avatar"
-	import { extractInitials } from '$lib/utils';
+	import * as Avatar from '$lib/components/ui/avatar';
+	import { cn, extractInitials } from '$lib/utils';
+	import CastAvatar from './CastAvatar.svelte';
 
 	export interface MediaPageProps {
 		media: Media;
@@ -74,14 +75,18 @@
 			</div>
 		</div>
 		<div>
-			<Carousel.Root>
+			<Carousel.Root opts={{
+				
+			}}>
 				<Carousel.Content>
-					{#each createdBy as { profilePath, name, role }}
-						<Carousel.Item class="basis-1/12 text-center">
-							<Avatar.Root class="w-32 h-32 inline-block">
-								<Avatar.Image src={getSrcForPath(profilePath, ProfileSize.W185)} />
-								<Avatar.Fallback class="text-2xl">{extractInitials(name)}</Avatar.Fallback>
-							</Avatar.Root>
+					{#each createdBy as credit}
+						<Carousel.Item class="basis-1/4 sm:basis-1/5 xl:basis-1/12">
+							<CastAvatar {credit} />
+						</Carousel.Item>
+					{/each}
+					{#each cast as credit}
+						<Carousel.Item class="basis-1/4 sm:basis-1/5 xl:basis-1/12">
+							<CastAvatar {credit} />
 						</Carousel.Item>
 					{/each}
 				</Carousel.Content>
