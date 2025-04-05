@@ -1,13 +1,16 @@
 import { tmdb } from '$lib/tmdb/tmdb'
-import type { Media } from '$lib/tmdb/types';
-import { parseMediaSingle } from '$lib/tmdb/utils'
+import { convertCastToCredit, convertCrewToCredit, parseMediaSingle } from '$lib/tmdb/utils'
+import type { MediaPageProps } from '$lib/components/media/MediaPage.svelte';
+import { partition } from '$lib/utils';
 
-export interface MoviePageProps {
-    media: Media
-}
 
-export async function load({ params: { tmdbId }, setHeaders }): Promise<MoviePageProps> {
+export async function load({ params: { tmdbId }, setHeaders }): Promise<MediaPageProps> {
     const movieInformation = await tmdb.movies.details(+tmdbId)
+    const credits = await tmdb.movies.credits(+tmdbId)
+
+    const PRIORITY_JOBS = ["Director"]
+
+    const [priorityCrew, otherCrew] = partition(credits.crew, c => PRIORITY_JOBS.includes(c.job))
 
     const media = parseMediaSingle(movieInformation);
 
@@ -16,6 +19,11 @@ export async function load({ params: { tmdbId }, setHeaders }): Promise<MoviePag
     })
 
     return {
-        media
+        media,
+        credits: {
+            createdBy: priorityCrew.map(convertCrewToCredit),
+            crew: otherCrew.map(convertCrewToCredit),
+            cast: credits.cast.map(convertCastToCredit)
+        }
     }
 }

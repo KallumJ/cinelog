@@ -15,8 +15,24 @@ export interface Media {
         displayText: string;
         value: string;
     }[],
-    productionCompanies: ProductionCompany[],
+    productionCompanies: ProductionCompany[]
 }
+
+export type Credits = {
+    createdBy: Credit[],
+    crew: Credit[],
+    cast: Credit[]
+}
+
+export interface Credit {
+    id: number;
+    creditId: string;
+    name: string;
+    role: string;
+    profilePath: string;
+}
+
+
 export enum MediaType {
     Movie = "movie",
     Tv = "tv"

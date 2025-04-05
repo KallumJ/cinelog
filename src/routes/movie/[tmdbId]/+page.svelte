@@ -1,8 +1,7 @@
 <script lang="ts">
-	import MediaPage from "$lib/components/media/MediaPage.svelte";
-    import type { MoviePageProps } from "./+page.server";
+	import MediaPage, { type MediaPageProps } from "$lib/components/media/MediaPage.svelte";
 
-    const { data }: { data: MoviePageProps } = $props();
+    const { data }: { data: MediaPageProps } = $props();
 </script>
 
-<MediaPage media={data.media} />
+<MediaPage media={data.media} credits={data.credits} />

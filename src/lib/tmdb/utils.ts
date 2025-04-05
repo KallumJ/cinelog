@@ -1,5 +1,5 @@
-import type {  MovieDetails, TvShowDetails } from 'tmdb-ts';
-import { MediaType, type Media } from './types';
+import {  type Cast, type Crew, type MovieDetails, type TvShowDetails } from 'tmdb-ts';
+import { MediaType, type Credit, type Media } from './types';
 import { getDateFromString, getYearFromDateString } from '$lib/utils';
 
 export function getSrcForPath(backdrop: string, size: string) {
@@ -106,3 +106,22 @@ export function parseMediaSingle(item: unknown): Media {
     }
 }
 
+export function convertCrewToCredit(c: Crew): Credit {
+    return {
+        creditId: c.credit_id,
+        role: c.job,
+        id: c.id,
+        name: c.name,
+        profilePath: c.profile_path
+    }
+}
+
+export function convertCastToCredit(c: Cast): Credit {
+    return {
+        creditId: c.credit_id,
+        role: c.character,
+        id: c.id,
+        name: c.name,
+        profilePath: c.profile_path
+    }
+}

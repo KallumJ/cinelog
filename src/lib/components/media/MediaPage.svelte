@@ -1,12 +1,19 @@
 <script lang="ts">
-	import { MediaType, type Media } from '$lib/tmdb/types';
+	import { MediaType, type Credits, type Media } from '$lib/tmdb/types';
 	import { getSrcForPath } from '$lib/tmdb/utils';
-	import { BackdropSize } from 'tmdb-ts';
+	import { BackdropSize, ProfileSize } from 'tmdb-ts';
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Carousel from '$lib/components/ui/carousel';
+	import * as Avatar from "$lib/components/ui/avatar"
+	import { extractInitials } from '$lib/utils';
 
-	const { media }: { media: Media } = $props();
+	export interface MediaPageProps {
+		media: Media;
+		credits: Credits;
+	}
+
+	const { media, credits }: MediaPageProps = $props();
 
 	const {
 		posterPath,
@@ -20,6 +27,8 @@
 		otherInformation,
 		productionCompanies
 	} = media;
+
+	const { createdBy, cast, crew } = credits;
 </script>
 
 <div>
@@ -67,9 +76,14 @@
 		<div>
 			<Carousel.Root>
 				<Carousel.Content>
-					<Carousel.Item class="basis-1/12">Test</Carousel.Item>
-					<Carousel.Item class="basis-1/12">Test</Carousel.Item>
-					<Carousel.Item class="basis-1/12">Test</Carousel.Item>
+					{#each createdBy as { profilePath, name, role }}
+						<Carousel.Item class="basis-1/12 text-center">
+							<Avatar.Root class="w-32 h-32 inline-block">
+								<Avatar.Image src={getSrcForPath(profilePath, ProfileSize.W185)} />
+								<Avatar.Fallback class="text-2xl">{extractInitials(name)}</Avatar.Fallback>
+							</Avatar.Root>
+						</Carousel.Item>
+					{/each}
 				</Carousel.Content>
 				<Carousel.Previous />
 				<Carousel.Next />
