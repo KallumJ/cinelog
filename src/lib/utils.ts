@@ -49,4 +49,4 @@ export function getFlagEmojiForCountryCode(countryCode: string) {
 	return String.fromCodePoint(...codePoints);
 }
 
-
+export const REGION_NAMES = new Intl.DisplayNames(['en'], { type: 'region' });

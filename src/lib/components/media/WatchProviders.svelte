@@ -6,12 +6,13 @@
 	import * as RadioGroup from '$lib/components/ui/radio-group';
 	import { getSrcForPath } from '$lib/tmdb/utils';
 	import { LogoSize } from 'tmdb-ts';
+	import Link from '$lib/components/ui/Link.svelte';
 
 	const { watchProviders }: { watchProviders: WatchProviderRegion[] } = $props();
 
 	const firstProvider = watchProviders[0] ?? undefined;
 
-	let selectedCountryCode = $state(firstProvider.locale);
+	let selectedCountryCode = $state(firstProvider?.locale);
 	let selectedRegion = $derived(watchProviders.find((p) => p.locale === selectedCountryCode));
 
 	let selectedCategory = $state(ProviderCategory.Stream);
@@ -42,7 +43,7 @@
 		<JustWatchLink /> helps you easily disocver where to legally stream your favorite movies and TV shows
 		online. For more details, visit
 		<JustWatchLink />. For further attribution, see our
-		<a href="/attribution">attribution page</a>.
+		<Link href="/attribution">attribution page</Link>.
 	</p>
 	{#if watchProviders.length > 0}
 		<span class="flex gap-4">
@@ -83,7 +84,7 @@
 					{/each}
 				</div>
 			{:else}
-				<h1 class="mt-4 text-xl font-semibold">
+				<h1 class="my-4 text-xl font-semibold">
 					This content is not available to {selectedCategory.toLowerCase()} in {selectedRegion?.countryName}
 				</h1>
 			{/if}

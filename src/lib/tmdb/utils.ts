@@ -1,6 +1,6 @@
-import {  type Buy, type Cast, type Crew, type Flatrate, type MovieDetails, type Rent, type TvShowDetails } from 'tmdb-ts';
-import { MediaType, type Credit, type Media, type Provider, type WatchProviderRegion } from './types';
-import { getDateFromString, getYearFromDateString } from '$lib/utils';
+import {  type Buy, type Cast, type CreatedBy, type Crew, type Flatrate, type MovieDetails, type Rent, type TvShowDetails, type WatchLocale } from 'tmdb-ts';
+import { MediaType, type Credit, type Media, type Provider, type WatchProviderRegion  } from './types';
+import { getDateFromString, getFlagEmojiForCountryCode, getYearFromDateString, REGION_NAMES } from '$lib/utils';
 
 export function getSrcForPath(backdrop: string, size: string) {
     if (backdrop === null) 
@@ -126,6 +126,16 @@ export function convertCastToCredit(c: Cast): Credit {
     }
 }
 
+export function convertCreatedByToCredit(c: CreatedBy): Credit {
+    return {
+        creditId: c.credit_id,
+        role: "Creator",
+        id: c.id,
+        name: c.name,
+        profilePath: c.profile_path
+    }
+}
+
 export function convertBuyFlatrateRentToDetails(p: Buy | Rent | Flatrate): Provider {
     return {
         displayPriority: p.display_priority,
@@ -133,6 +143,28 @@ export function convertBuyFlatrateRentToDetails(p: Buy | Rent | Flatrate): Provi
         name: p.provider_name,
         id: p.provider_id
     }
+}
+
+export function convertWatchLocaleToWatchProviderRegion(w: WatchLocale): WatchProviderRegion[] {
+    return Object.entries(w).map(
+        ([key, provider]: [
+            key: string,
+            provider: {
+                link: string;
+                flatrate?: Flatrate[];
+                rent?: Rent[];
+                buy?: Buy[];
+            }
+        ]) => ({
+            locale: key,
+            link: provider.link,
+            stream: provider.flatrate?.map(convertBuyFlatrateRentToDetails),
+            rent: provider.rent?.map(convertBuyFlatrateRentToDetails),
+            buy: provider.buy?.map(convertBuyFlatrateRentToDetails),
+            countryName: REGION_NAMES.of(key) ?? "",
+            countryFlag: getFlagEmojiForCountryCode(key)
+        })
+    ).sort(sortWatchProviders)
 }
 
 export const sortWatchProviders = (a: WatchProviderRegion, b: WatchProviderRegion): number => {
