@@ -4,10 +4,23 @@
 	import { BackdropSize } from 'tmdb-ts';
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
+	import * as Carousel from '$lib/components/ui/carousel';
+	import { Root } from '../ui/button/index';
 
 	const { media }: { media: Media } = $props();
 
-	const { posterPath, title, type, tmdbId, backdropPath, initalReleaseYear } = media;
+	const {
+		posterPath,
+		title,
+		type,
+		tmdbId,
+		backdropPath,
+		initalReleaseYear,
+		tagline,
+		description,
+		otherInformation,
+		productionCompanies
+	} = media;
 </script>
 
 <div>
@@ -20,9 +33,9 @@
 			<div class="absolute inset-0 bg-black opacity-50"></div>
 			<Card.Root class="z-10">
 				<Card.Content class="p-2 sm:p-6">
-					<span class="flex items-center sm:items-end gap-2 sm:gap-4">
-						<h1 class="md:text-6xl sm:text-5xl text-lg font-bold">{title}</h1>
-						<p class="dark:text-gray-500 md:text-2xl sm:text-xl text-sm font-bold">
+					<span class="flex items-center gap-2 sm:items-end sm:gap-4">
+						<h1 class="text-lg font-bold sm:text-5xl md:text-6xl">{title}</h1>
+						<p class="text-sm font-bold dark:text-gray-500 sm:text-xl md:text-2xl">
 							{#if type === MediaType.Movie}
 								{initalReleaseYear}
 							{/if}
@@ -32,4 +45,36 @@
 			</Card.Root>
 		</div>
 	</div>
+	<Card.Root class="my-4 p-4">
+		<div class="sm:flex">
+			<div>
+				<p class="text-xl italic">{tagline}</p>
+				<p class="my-4 text-lg">{description}</p>
+			</div>
+			<div class="mb-8">
+				<div>
+					{#each otherInformation as info}
+						<p><span class="font-semibold">{info.displayText}:</span> {info.value}</p>
+					{/each}
+				</div>
+				<p class="font-semibold">Production companies</p>
+				<ul class="list-inside list-disc sm:w-96">
+					{#each productionCompanies as { name }}
+						<li>{name}</li>
+					{/each}
+				</ul>
+			</div>
+		</div>
+		<div>
+			<Carousel.Root>
+				<Carousel.Content>
+					<Carousel.Item class="basis-1/12">Test</Carousel.Item>
+					<Carousel.Item class="basis-1/12">Test</Carousel.Item>
+					<Carousel.Item class="basis-1/12">Test</Carousel.Item>
+				</Carousel.Content>
+				<Carousel.Previous />
+				<Carousel.Next />
+			</Carousel.Root>
+		</div>
+	</Card.Root>
 </div>
