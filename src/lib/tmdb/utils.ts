@@ -23,14 +23,16 @@ function isTV(item: unknown): item is TV {
 const convertMovie = (m: Movie): Media => ({
 	title: m.title,
 	posterPath: m.poster_path,
-	type: MediaType.Movie
+	type: MediaType.Movie,
+    tmdbId: m.id
 });
 
 // Helper function to convert a single TV show to Media
 const convertTV = (t: TV): Media => ({
 	title: t.name, // Use 'name' for TV shows
 	posterPath: t.poster_path,
-	type: MediaType.Tv
+	type: MediaType.Tv,
+    tmdbId: t.id
 });
 
 export function parseMediaArray(data: unknown): Media[] {

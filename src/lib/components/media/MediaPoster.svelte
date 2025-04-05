@@ -1,14 +1,14 @@
-<script>
+<script lang="ts">
 	import { getSrcForPath } from '$lib/tmdb/utils';
 	import { PosterSize } from 'tmdb-ts';
 
-	const { posterPath, title } = $props();
+	const { posterPath, title, type, tmdbId } = $props();
 
 	const src = getSrcForPath(posterPath, PosterSize.W780);
 </script>
 
 <div class="overflow-hidden rounded-lg bg-gradient-to-b from-slate-800 to-slate-600 shadow-lg transition-all hover:scale-105">
-	<a href="#" draggable="false" class="select-none">
+	<a href={`${type}/${tmdbId}`} draggable="false" class="select-none">
 		{#if src === null}
 			<div class="w-full h-full flex justify-center items-center text-shadow-sm"><p class="text-center text-xl sm:text-4xl font-bold w-5/6">{title}</p></div>
 		{:else}

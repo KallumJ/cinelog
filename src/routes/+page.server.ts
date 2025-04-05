@@ -6,9 +6,13 @@ export interface HomePageProps {
     tvShows: OnTheAir;
 }
 
-export async function load(): Promise<HomePageProps> {
+export async function load({ setHeaders }): Promise<HomePageProps> {
 	const movies = await tmdb.movies.nowPlaying()
     const tvShows = await tmdb.tvShows.onTheAir();
+
+    setHeaders({
+        "cache-control": "private, max-age=3600"
+    })
 
     return {
         movies,
