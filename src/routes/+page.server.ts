@@ -1,14 +1,14 @@
 import { tmdb } from "$lib/tmdb/tmdb";
-import type { PopularMovies, PopularTvShows } from "tmdb-ts";
+import type { MoviesPlayingNow, OnTheAir } from "tmdb-ts";
 
 export interface HomePageProps {
-    movies: PopularMovies;
-    tvShows: PopularTvShows;
+    movies: MoviesPlayingNow;
+    tvShows: OnTheAir;
 }
 
 export async function load(): Promise<HomePageProps> {
-	const movies = await tmdb.movies.popular()
-    const tvShows = await tmdb.tvShows.popular();
+	const movies = await tmdb.movies.nowPlaying()
+    const tvShows = await tmdb.tvShows.onTheAir();
 
     return {
         movies,
