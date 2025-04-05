@@ -1,4 +1,4 @@
-import type { Movie, TV } from 'tmdb-ts';
+import type {  MovieDetails, TvShowDetails } from 'tmdb-ts';
 import { MediaType, type Media } from './types';
 import { getDateFromString, getYearFromDateString } from '$lib/utils';
 
@@ -10,36 +10,71 @@ export function getSrcForPath(backdrop: string, size: string) {
 }
 
 // Type guard to check if an object is a Movie
-function isMovie(item: unknown): item is Movie {
-    return typeof item === 'object' && item !== null && (item as Movie).title !== undefined;
+function isMovie(item: unknown): item is MovieDetails {
+    return typeof item === 'object' && item !== null && (item as MovieDetails).title !== undefined;
 }
 
 // Type guard to check if an object is a TV show
-function isTV(item: unknown): item is TV {
-    return typeof item === 'object' && item !== null && (item as TV).name !== undefined;
+function isTV(item: unknown): item is TvShowDetails {
+    return typeof item === 'object' && item !== null && (item as TvShowDetails).name !== undefined;
 }
 
 
 // Helper function to convert a single Movie to Media
-const convertMovie = (m: Movie): Media => ({
+const convertMovie = (m: MovieDetails): Media => ({
 	title: m.title,
-	posterPath: m.poster_path,
+	posterPath: m.poster_path ?? "",
 	type: MediaType.Movie,
     tmdbId: m.id,
     backdropPath: m.backdrop_path,
     initalReleaseDate: getDateFromString(m.release_date),
-    initalReleaseYear: getYearFromDateString(m.release_date)
+    initalReleaseYear: getYearFromDateString(m.release_date),
+    tagline: m.tagline,
+    description: m.overview,
+    otherInformation: [
+        {
+            key: "releaseDate",
+            value: getDateFromString(m.release_date).toLocaleDateString(),
+            displayText: "Release date"
+        },
+        {
+            key: "budget",
+            value: `$${m.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+            displayText: "Budget (USD)"
+        },
+        {
+            key: "runtime",
+            value: `${m.runtime} minutes`,
+            displayText: "Runtime"
+        }
+    ],
+    productionCompanies: m.production_companies,
 });
 
 // Helper function to convert a single TV show to Media
-const convertTV = (t: TV): Media => ({
+const convertTV = (t: TvShowDetails): Media => ({
 	title: t.name, // Use 'name' for TV shows
 	posterPath: t.poster_path,
 	type: MediaType.Tv,
     tmdbId: t.id,
     backdropPath: t.backdrop_path,
     initalReleaseDate: getDateFromString(t.first_air_date),
-    initalReleaseYear: getYearFromDateString(t.first_air_date)
+    initalReleaseYear: getYearFromDateString(t.first_air_date),
+    tagline: t.tagline,
+    description: t.overview,
+    otherInformation: [
+        {
+            key: "numOfSeasons",
+            value: t.number_of_seasons.toString(),
+            displayText: "Number of seasons",
+        },
+        {
+            key: "numOfEpisodes",
+            value: t.number_of_episodes.toString(),
+            displayText: "Number of episodes"
+        }
+    ],
+    productionCompanies: t.production_companies,
 });
 
 export function parseMediaArray(data: unknown): Media[] {

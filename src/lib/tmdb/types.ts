@@ -1,3 +1,4 @@
+import type { ProductionCompany } from "tmdb-ts";
 
 export interface Media {
     posterPath: string;
@@ -7,6 +8,14 @@ export interface Media {
     backdropPath: string;
     initalReleaseDate: Date;
     initalReleaseYear: number;
+    tagline: string;
+    description: string;
+    otherInformation: { 
+        key: string;
+        displayText: string;
+        value: string;
+    }[],
+    productionCompanies: ProductionCompany[],
 }
 export enum MediaType {
     Movie = "movie",
