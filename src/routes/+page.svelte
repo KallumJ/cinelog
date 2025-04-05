@@ -13,11 +13,11 @@
 		<Tabs.Trigger value="tv"><span class="mx-3">TV</span>📺</Tabs.Trigger>
 	</Tabs.List>
 
-	<Tabs.Content value="movies" class="mt-4">
+	<Tabs.Content value="movies" class="mt-4 animate-fade-left">
 		<MediaPosterGrid media={parseMediaArray(data.movies.results)} />
 	</Tabs.Content>
 
-	<Tabs.Content value="tv" class="mt-4">
+	<Tabs.Content value="tv" class="mt-4 animate-fade-left">
 		<MediaPosterGrid media={parseMediaArray(data.tvShows.results)} />
 	</Tabs.Content>
 </Tabs.Root>
