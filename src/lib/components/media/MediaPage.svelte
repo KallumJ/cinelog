@@ -5,7 +5,6 @@
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Carousel from '$lib/components/ui/carousel';
-	import { Root } from '../ui/button/index';
 
 	const { media }: { media: Media } = $props();
 
