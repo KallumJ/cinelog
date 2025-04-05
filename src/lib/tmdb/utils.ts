@@ -1,5 +1,5 @@
-import {  type Cast, type Crew, type MovieDetails, type TvShowDetails } from 'tmdb-ts';
-import { MediaType, type Credit, type Media } from './types';
+import {  type Buy, type Cast, type Crew, type Flatrate, type MovieDetails, type Rent, type TvShowDetails } from 'tmdb-ts';
+import { MediaType, type Credit, type Media, type Provider, type WatchProviderRegion } from './types';
 import { getDateFromString, getYearFromDateString } from '$lib/utils';
 
 export function getSrcForPath(backdrop: string, size: string) {
@@ -39,7 +39,7 @@ const convertMovie = (m: MovieDetails): Media => ({
         },
         {
             key: "budget",
-            value: `$${m.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
+            value: `$${(m.budget ?? 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`,
             displayText: "Budget (USD)"
         },
         {
@@ -65,12 +65,12 @@ const convertTV = (t: TvShowDetails): Media => ({
     otherInformation: [
         {
             key: "numOfSeasons",
-            value: t.number_of_seasons.toString(),
+            value: t.number_of_seasons?.toString(),
             displayText: "Number of seasons",
         },
         {
             key: "numOfEpisodes",
-            value: t.number_of_episodes.toString(),
+            value: t.number_of_episodes?.toString(),
             displayText: "Number of episodes"
         }
     ],
@@ -125,3 +125,31 @@ export function convertCastToCredit(c: Cast): Credit {
         profilePath: c.profile_path
     }
 }
+
+export function convertBuyFlatrateRentToDetails(p: Buy | Rent | Flatrate): Provider {
+    return {
+        displayPriority: p.display_priority,
+        logoPath: p.logo_path,
+        name: p.provider_name,
+        id: p.provider_id
+    }
+}
+
+export const sortWatchProviders = (a: WatchProviderRegion, b: WatchProviderRegion): number => {
+    const preferredLocales: string[] = ["GB"];
+
+    const aIsPreferred = preferredLocales.includes(a.locale);
+    const bIsPreferred = preferredLocales.includes(b.locale);
+
+    // Case 1: 'a' is preferred, 'b' is not. 'a' comes first.
+    if (aIsPreferred && !bIsPreferred) {
+        return -1;
+    }
+    // Case 2: 'b' is preferred, 'a' is not. 'b' comes first.
+    if (!aIsPreferred && bIsPreferred) {
+        return 1;
+    }
+
+    // Case 3: Both are preferred OR both are not preferred.
+    return a.countryName.toLowerCase().localeCompare(b.countryName.toLowerCase());
+};

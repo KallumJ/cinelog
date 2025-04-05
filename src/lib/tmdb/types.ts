@@ -21,7 +21,24 @@ export interface Media {
 export type Credits = {
     createdBy: Credit[],
     crew: Credit[],
-    cast: Credit[]
+    cast: Credit[],
+}
+
+export type WatchProviderRegion = {
+    locale: string;
+    link: string;
+    countryName: string;
+    countryFlag: string;
+    stream?: Provider[];
+    rent?: Provider[];
+    buy?: Provider[];
+}
+
+export type Provider = {
+    displayPriority: number;
+    logoPath: string;
+    id: number;
+    name: string;
 }
 
 export interface Credit {
@@ -30,6 +47,12 @@ export interface Credit {
     name: string;
     role: string;
     profilePath: string;
+}
+
+export enum ProviderCategory {
+    Stream = "Stream",
+    Buy = "Buy",
+    Rent = "Rent"
 }
 
 

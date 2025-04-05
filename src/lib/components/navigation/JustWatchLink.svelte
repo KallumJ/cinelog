@@ -1,0 +1,1 @@
+<a class="text-blue-500 underline" href="https://www.justwatch.com">JustWatch</a>

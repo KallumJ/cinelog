@@ -1,20 +1,21 @@
 <script lang="ts">
-	import { MediaType, type Credits, type Media } from '$lib/tmdb/types';
+	import { MediaType, type Credits, type Media, type WatchProviderRegion } from '$lib/tmdb/types';
 	import { getSrcForPath } from '$lib/tmdb/utils';
 	import { BackdropSize, ProfileSize } from 'tmdb-ts';
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Carousel from '$lib/components/ui/carousel';
-	import { cn, extractInitials } from '$lib/utils';
-	import CastAvatar from './CastAvatar.svelte';
+	import { extractInitials } from '$lib/utils';
+	import WatchProviders from './WatchProviders.svelte';
 
 	export interface MediaPageProps {
 		media: Media;
 		credits: Credits;
+		watchProviders: WatchProviderRegion[];
 	}
 
-	const { media, credits }: MediaPageProps = $props();
+	const { media, credits, watchProviders }: MediaPageProps = $props();
 
 	const {
 		posterPath,
@@ -30,6 +31,7 @@
 	} = media;
 
 	const { createdBy, cast, crew } = credits;
+
 </script>
 
 <div>
@@ -74,7 +76,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="w-full max-w-4xl sm:max-w-max mx-auto px-1 md:px-8 py-4 relative">
+		<div class="relative mx-auto w-full max-w-4xl px-1 py-4 sm:max-w-max md:px-8">
 			<Carousel.Root class="w-full">
 				<Carousel.Content class="-ml-4">
 					{#each [...createdBy, ...cast, ...crew] as { profilePath, name, role }}
@@ -90,9 +92,14 @@
 						</Carousel.Item>
 					{/each}
 				</Carousel.Content>
-				<Carousel.Previous class="absolute left-2 md:-left-10 top-1/2 -translate-y-1/2 z-10 hidden md:inline-flex" />
-				<Carousel.Next class="absolute right-2 md:-right-10 top-1/2 -translate-y-1/2 z-10 hidden md:inline-flex" />
+				<Carousel.Previous
+					class="absolute left-2 top-1/2 z-10 hidden -translate-y-1/2 md:-left-10 md:inline-flex"
+				/>
+				<Carousel.Next
+					class="absolute right-2 top-1/2 z-10 hidden -translate-y-1/2 md:-right-10 md:inline-flex"
+				/>
 			</Carousel.Root>
 		</div>
+		<WatchProviders {watchProviders} />
 	</Card.Root>
 </div>

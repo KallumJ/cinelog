@@ -7,7 +7,7 @@
 	let { data }: { data: HomePageProps } = $props();
 </script>
 
-<Tabs.Root class="w-full">
+<Tabs.Root class="w-full" value="movies">
 	<Tabs.List class="mx-auto grid w-11/12 grid-cols-2 sm:w-3/4">
 		<Tabs.Trigger value="movies"><span class="mx-3">Movies</span>🎬</Tabs.Trigger>
 		<Tabs.Trigger value="tv"><span class="mx-3">TV</span>📺</Tabs.Trigger>
