@@ -1,6 +1,7 @@
 import { fontFamily } from "tailwindcss/defaultTheme";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
+import tailwindTextShadow from "@designbycode/tailwindcss-text-shadow"
 
 const config: Config = {
 	darkMode: ["class"],
@@ -82,15 +83,26 @@ const config: Config = {
 					"0%,70%,100%": { opacity: "1" },
 					"20%,50%": { opacity: "0" },
 				},
+				"fade-left": {
+					"0%": {
+					  opacity: "0",
+					  transform: "translateX(2rem)"
+					},
+					"100%": {
+					  opacity: "1",
+					  transform: "translateX(0)"
+					}
+				  },
 			},
 			animation: {
         		"accordion-down": "accordion-down 0.2s ease-out",
         		"accordion-up": "accordion-up 0.2s ease-out",
        			"caret-blink": "caret-blink 1.25s ease-out infinite",
+				"fade-left": "fade-left 0.2s ease"
       		},
 		},
 	},
-	plugins: [tailwindcssAnimate],
+	plugins: [tailwindcssAnimate, tailwindTextShadow],
 };
 
 export default config;

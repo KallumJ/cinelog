@@ -43,6 +43,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@designbycode/tailwindcss-text-shadow": "^2.2.1",
 		"mode-watcher": "^0.5.1",
 		"tmdb-ts": "^2.0.1"
 	}
