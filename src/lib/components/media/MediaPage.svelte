@@ -6,7 +6,7 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
 	import * as Carousel from '$lib/components/ui/carousel';
-	import { extractInitials } from '$lib/utils';
+	import { cn, extractInitials } from '$lib/utils';
 	import WatchProviders from './WatchProviders.svelte';
 
 	export interface MediaPageProps {
@@ -24,10 +24,12 @@
 		tmdbId,
 		backdropPath,
 		initalReleaseYear,
+		recentReleaseYear,
 		tagline,
 		description,
 		otherInformation,
-		productionCompanies
+		productionCompanies,
+		aggregateRating
 	} = media;
 
 	const { createdBy, cast, crew } = credits;
@@ -44,11 +46,18 @@
 			<div class="absolute inset-0 bg-black opacity-50"></div>
 			<Card.Root class="z-10">
 				<Card.Content class="p-2 sm:p-6">
+					<div class="mb-2">
+						<div class={cn("bg-yellow-600 p-4 rounded-lg w-fit", {"bg-green-500": aggregateRating >= 70, "bg-red-500": aggregateRating <= 40})}>
+							<p class="text-2xl font-bold">{aggregateRating}</p>
+						</div>
+					</div>
 					<span class="flex items-center gap-2 sm:items-end sm:gap-4">
 						<h1 class="text-lg font-bold sm:text-5xl md:text-6xl">{title}</h1>
 						<p class="text-sm font-bold dark:text-gray-500 sm:text-xl md:text-2xl">
 							{#if type === MediaType.Movie}
 								{initalReleaseYear}
+							{:else}
+								{initalReleaseYear} - {recentReleaseYear}
 							{/if}
 						</p>
 					</span>
@@ -62,7 +71,7 @@
 				<p class="text-xl italic">{tagline}</p>
 				<p class="my-4 text-lg">{description}</p>
 			</div>
-			<div class="mb-8">
+			<div class="mb-8 ml-auto">
 				<div>
 					{#each otherInformation as info}
 						<p><span class="font-semibold">{info.displayText}:</span> {info.value}</p>
@@ -76,7 +85,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="relative mx-auto w-full max-w-4xl px-1 py-4 sm:max-w-max md:px-8">
+		<div class="relative w-full max-w-4xl px-1 py-4 sm:max-w-max md:px-8">
 			<Carousel.Root class="w-full">
 				<Carousel.Content class="-ml-4">
 					{#each [...createdBy, ...cast, ...crew] as { profilePath, name, role }}

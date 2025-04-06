@@ -28,9 +28,11 @@ const convertMovie = (m: MovieDetails): Media => ({
     tmdbId: m.id,
     backdropPath: m.backdrop_path,
     initalReleaseDate: getDateFromString(m.release_date),
+    recentReleaseYear: getYearFromDateString(m.release_date),
     initalReleaseYear: getYearFromDateString(m.release_date),
     tagline: m.tagline,
     description: m.overview,
+    aggregateRating: Math.round(m.vote_average * 10),
     otherInformation: [
         {
             key: "releaseDate",
@@ -60,8 +62,10 @@ const convertTV = (t: TvShowDetails): Media => ({
     backdropPath: t.backdrop_path,
     initalReleaseDate: getDateFromString(t.first_air_date),
     initalReleaseYear: getYearFromDateString(t.first_air_date),
+    recentReleaseYear: getYearFromDateString(t.last_air_date),
     tagline: t.tagline,
     description: t.overview,
+    aggregateRating: Math.round(t.vote_average * 10),
     otherInformation: [
         {
             key: "numOfSeasons",

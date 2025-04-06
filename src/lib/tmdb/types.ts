@@ -8,6 +8,8 @@ export interface Media {
     backdropPath: string;
     initalReleaseDate: Date;
     initalReleaseYear: number;
+    recentReleaseYear: number;
+    aggregateRating: number;
     tagline: string;
     description: string;
     otherInformation: { 
