@@ -8,6 +8,7 @@
 	import * as Carousel from '$lib/components/ui/carousel';
 	import { cn, extractInitials } from '$lib/utils';
 	import WatchProviders from './WatchProviders.svelte';
+	import { enhance } from '$app/forms';
 
 	export interface MediaPageProps {
 		media: Media;
@@ -33,7 +34,6 @@
 	} = media;
 
 	const { createdBy, cast, crew } = credits;
-
 </script>
 
 <div>
@@ -46,9 +46,14 @@
 			<div class="absolute inset-0 bg-black opacity-50"></div>
 			<Card.Root class="z-10">
 				<Card.Content class="p-2 sm:p-6">
-					<div class="mb-2">
-						<div class={cn("bg-yellow-600 p-4 rounded-lg w-fit", {"bg-green-500": aggregateRating >= 70, "bg-red-500": aggregateRating <= 40})}>
-							<p class="text-2xl font-bold">{aggregateRating}</p>
+					<div class="mb-2 flex items-center gap-8">
+						<div
+							class={cn('w-fit rounded-lg bg-yellow-600 p-2 sm:p-4', {
+								'bg-green-500': aggregateRating >= 70,
+								'bg-red-500': aggregateRating <= 40
+							})}
+						>
+							<p class="text-lg font-bold sm:text-2xl">{aggregateRating}</p>
 						</div>
 					</div>
 					<span class="flex items-center gap-2 sm:items-end sm:gap-4">
