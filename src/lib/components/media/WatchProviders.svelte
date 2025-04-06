@@ -18,14 +18,9 @@
 	let selectedCategory = $state(ProviderCategory.Stream);
 
 	let selectedProvider = $derived(
-		selectedRegion
-			? (selectedRegion[
-					selectedCategory.toLowerCase() as keyof Pick<
-						WatchProviderRegion,
-						'stream' | 'buy' | 'rent'
-					>
-				] ?? [])
-			: []
+		selectedRegion?.[
+			selectedCategory.toLowerCase() as keyof Pick<WatchProviderRegion, 'stream' | 'buy' | 'rent'>
+		] ?? []
 	);
 </script>
 
