@@ -55,6 +55,10 @@
 						>
 							<p class="text-lg font-bold sm:text-2xl">{aggregateRating}</p>
 						</div>
+						<form method="POST" action="/?/watch" use:enhance>
+							<input type="hidden" name="tmdbId" value={media.tmdbId}>
+							<button>Watch</button>
+						</form>
 					</div>
 					<span class="flex items-center gap-2 sm:items-end sm:gap-4">
 						<h1 class="text-lg font-bold sm:text-5xl md:text-6xl">{title}</h1>
