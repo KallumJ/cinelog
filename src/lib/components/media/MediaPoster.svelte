@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { getSrcForPath } from '$lib/tmdb/utils';
-	import { cn } from '$lib/utils';
+	import { cn, preload } from '$lib/utils';
+	import { fly } from 'svelte/transition';
 	import { PosterSize } from 'tmdb-ts';
+
 
 	const { posterPath, title, type, tmdbId, clickable = true, class: className = "" } = $props();
 
@@ -15,7 +17,9 @@
 				<p class="text-center text-xl sm:text-4xl font-bold w-5/6">{title}</p>
 			</div>
 		{:else}
-			<img {src} alt="{title} Poster" loading="lazy" draggable="false" class="h-full w-full" />
+			{#await preload(src) then _}
+				<img in:fly {src} alt="{title} Poster" loading="lazy" draggable="false" class="h-full w-full" />
+			{/await}
 		{/if}
 	</a>
 </div>

@@ -50,3 +50,11 @@ export function getFlagEmojiForCountryCode(countryCode: string) {
 }
 
 export const REGION_NAMES = new Intl.DisplayNames(['en'], { type: 'region' });
+
+export function preload(src: string) {
+	return new Promise(function(resolve) {
+	  let img = new Image()
+	  img.onload = resolve
+	  img.src = src
+	})
+  }
