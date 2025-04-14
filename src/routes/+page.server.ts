@@ -2,6 +2,9 @@ import { tmdb } from "$lib/tmdb/tmdb";
 import { fail, type Actions } from "@sveltejs/kit";
 import type { MoviesPlayingNow, OnTheAir } from "tmdb-ts";
 import { watchFormSchema } from "$lib/forms/watchForm";
+import { message, superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { getOrCreateWatch, supabase } from "../lib/supabaseClient.js";
 
 export interface HomePageProps {
     movies: MoviesPlayingNow;
@@ -24,15 +27,12 @@ export async function load({ setHeaders }): Promise<HomePageProps> {
 
 export const actions: Actions = {
     watch: async ({ request }) => {
-        const formData = await request.formData();
-        const validationResult = watchFormSchema.safeParse(Object.fromEntries(formData.entries()));
+        const form = await superValidate(request, zod(watchFormSchema));
 
-        if (!validationResult.success) {
-            return fail(400)
+        if (!form.valid) {
+            return fail(400, { form })
         }
 
-        const { tmdbId } = validationResult.data
-
-        return { success: true }
+        return message(form, "Form posted successfully")
     }
 };

@@ -8,15 +8,18 @@
 	import * as Carousel from '$lib/components/ui/carousel';
 	import { cn, extractInitials } from '$lib/utils';
 	import WatchProviders from './WatchProviders.svelte';
-	import { enhance } from '$app/forms';
+	import { superForm } from 'sveltekit-superforms';
+	import type { WatchSuperForm } from '$lib/forms/watchForm';
 
 	export interface MediaPageProps {
 		media: Media;
 		credits: Credits;
 		watchProviders: WatchProviderRegion[];
+		watchForm: WatchSuperForm;
 	}
 
-	const { media, credits, watchProviders }: MediaPageProps = $props();
+	const data: MediaPageProps = $props();
+	const { media, credits, watchProviders } = data;
 
 	const {
 		posterPath,
@@ -34,6 +37,8 @@
 	} = media;
 
 	const { createdBy, cast, crew } = credits;
+
+	const { form: watchForm, enhance: watchFormEnhance } = superForm(data.watchForm)
 </script>
 
 <div>
@@ -55,8 +60,9 @@
 						>
 							<p class="text-lg font-bold sm:text-2xl">{aggregateRating}</p>
 						</div>
-						<form method="POST" action="/?/watch" use:enhance>
-							<input type="hidden" name="tmdbId" value={media.tmdbId}>
+						<form method="POST" action="/?/watch" use:watchFormEnhance>
+							<input type="hidden" name="tmdbId" bind:value={$watchForm.tmdbId} />
+							<input type="hidden" name="type" bind:value={$watchForm.type} />
 							<button>Watch</button>
 						</form>
 					</div>
