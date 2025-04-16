@@ -4,7 +4,6 @@ import type { MoviesPlayingNow, OnTheAir } from "tmdb-ts";
 import { watchFormSchema } from "$lib/forms/watchForm";
 import { message, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
-import { getOrCreateWatch, supabase } from "../lib/supabaseClient.js";
 
 export interface HomePageProps {
     movies: MoviesPlayingNow;
