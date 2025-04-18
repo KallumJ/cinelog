@@ -19,7 +19,7 @@
 </script>
 
 <ModeWatcher />
-<NavSheet />
+<NavSheet session={session}/>
 <div class="mx-4 sm:mx-8">
 	{@render children?.()}
 </div>
