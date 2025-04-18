@@ -10,16 +10,22 @@
 	import WatchProviders from './WatchProviders.svelte';
 	import { superForm } from 'sveltekit-superforms';
 	import type { WatchSuperForm } from '$lib/forms/watchForm';
+	import Eye from '@lucide/svelte/icons/eye';
+	import type { Session } from '@supabase/supabase-js';
 
 	export interface MediaPageProps {
 		media: Media;
 		credits: Credits;
 		watchProviders: WatchProviderRegion[];
 		watchForm: WatchSuperForm;
+		controls: {
+			watched: boolean
+		},
+		session: Session | null
 	}
 
 	const data: MediaPageProps = $props();
-	const { media, credits, watchProviders } = data;
+	const { media, credits, watchProviders, controls, session } = data;
 
 	const {
 		posterPath,
@@ -39,6 +45,12 @@
 	const { createdBy, cast, crew } = credits;
 
 	const { form: watchForm, enhance: watchFormEnhance } = superForm(data.watchForm)
+
+	let isWatched = $state(controls.watched)
+
+	const onToggleWatched = () => {
+		isWatched = !isWatched
+	}
 </script>
 
 <div>
@@ -51,7 +63,7 @@
 			<div class="absolute inset-0 bg-black opacity-50"></div>
 			<Card.Root class="z-10">
 				<Card.Content class="p-2 sm:p-6">
-					<div class="mb-2 flex items-center gap-8">
+					<div class="mb-2 flex items-center gap-3 md:gap-6">
 						<div
 							class={cn('w-fit rounded-lg bg-yellow-600 p-2 sm:p-4', {
 								'bg-green-500': aggregateRating >= 70,
@@ -60,11 +72,15 @@
 						>
 							<p class="text-lg font-bold sm:text-2xl">{aggregateRating}</p>
 						</div>
-						<form method="POST" action="/?/watch" use:watchFormEnhance>
-							<input type="hidden" name="tmdbId" bind:value={$watchForm.tmdbId} />
-							<input type="hidden" name="type" bind:value={$watchForm.type} />
-							<button>Watch</button>
-						</form>
+						{#if session}
+							<form method="POST" action="/?/watch" use:watchFormEnhance onsubmit={onToggleWatched}>
+								<input type="hidden" name="tmdbId" bind:value={$watchForm.tmdbId} />
+								<input type="hidden" name="type" bind:value={$watchForm.type} />
+								<button>
+									<Eye class={cn("sm:w-10 sm:h-10", { "invert": isWatched })} fill="black" />
+								</button>
+							</form>
+						{/if}
 					</div>
 					<span class="flex items-center gap-2 sm:items-end sm:gap-4">
 						<h1 class="text-lg font-bold sm:text-5xl md:text-6xl">{title}</h1>

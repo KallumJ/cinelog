@@ -10,9 +10,10 @@ import { partition } from '$lib/utils';
 import { superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { watchFormSchema } from '$lib/forms/watchForm';
-import { MediaType } from '../../../lib/tmdb/types.js';
+import { MediaType } from '$lib/tmdb/types';
+import { getOrCreateMedia, getWatchForMediaIfToday } from '$lib/supabase';
 
-export async function load({ params: { tmdbId }, setHeaders }): Promise<MediaPageProps> {
+export async function load({ params: { tmdbId }, setHeaders, locals: { supabase, session } }): Promise<MediaPageProps> {
 	const movieInformation = await tmdb.movies.details(+tmdbId);
 	const credits = await tmdb.movies.credits(+tmdbId);
 	const watchProviders = await tmdb.movies.watchProviders(+tmdbId);
@@ -29,6 +30,19 @@ export async function load({ params: { tmdbId }, setHeaders }): Promise<MediaPag
 
 	const watchForm = await superValidate({ tmdbId: media.tmdbId, type: MediaType.Movie }, zod(watchFormSchema));
 
+	let controls = {
+		watched: false
+	}
+
+	if (session) {
+		const mediaRecord = await getOrCreateMedia(+tmdbId, MediaType.Movie, supabase)
+
+		const { data } = await getWatchForMediaIfToday(mediaRecord.id, session.user.id, supabase);
+
+		controls = { ...controls, watched: !!data }
+	}
+	
+
 	return {
 		media,
 		credits: {
@@ -37,6 +51,8 @@ export async function load({ params: { tmdbId }, setHeaders }): Promise<MediaPag
 			cast: credits.cast.map(convertCastToCredit)
 		},
 		watchProviders: convertWatchLocaleToWatchProviderRegion(watchProviders.results),
-		watchForm
+		watchForm,
+		controls,
+		session
 	};
 }
