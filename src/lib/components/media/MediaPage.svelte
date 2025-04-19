@@ -12,14 +12,18 @@
 	import type { WatchSuperForm } from '$lib/forms/watchForm';
 	import Eye from '@lucide/svelte/icons/eye';
 	import type { Session } from '@supabase/supabase-js';
+	import StarRating from '../ui/rating/StarRating.svelte';
+	import type { RatingSuperForm } from '$lib/forms/ratingForm';
 
 	export interface MediaPageProps {
 		media: Media;
 		credits: Credits;
 		watchProviders: WatchProviderRegion[];
-		watchForm: WatchSuperForm;
 		controls: {
-			watched: boolean
+			mediaId?: number;
+			isWatched: boolean;
+			watchForm: WatchSuperForm;
+			rateForm: RatingSuperForm
 		},
 		session: Session | null
 	}
@@ -44,9 +48,12 @@
 
 	const { createdBy, cast, crew } = credits;
 
-	const { form: watchForm, enhance: watchFormEnhance } = superForm(data.watchForm)
 
-	let isWatched = $state(controls.watched)
+	const { form: watchForm, enhance: watchFormEnhance } = superForm(controls.watchForm)
+
+	const { form: rateForm, enhance: rateFormEnhance } = superForm(controls.rateForm)
+
+	let isWatched = $state(controls.isWatched)
 
 	const onToggleWatched = () => {
 		isWatched = !isWatched
@@ -63,7 +70,7 @@
 			<div class="absolute inset-0 bg-black opacity-50"></div>
 			<Card.Root class="z-10">
 				<Card.Content class="p-2 sm:p-6">
-					<div class="mb-2 flex items-center gap-3 md:gap-6">
+					<div class="mb-2 mr-2 flex items-center gap-3 md:gap-6">
 						<div
 							class={cn('w-fit rounded-lg bg-yellow-600 p-2 sm:p-4', {
 								'bg-green-500': aggregateRating >= 70,
@@ -74,11 +81,14 @@
 						</div>
 						{#if session}
 							<form method="POST" action="/?/watch" use:watchFormEnhance onsubmit={onToggleWatched}>
-								<input type="hidden" name="tmdbId" bind:value={$watchForm.tmdbId} />
-								<input type="hidden" name="type" bind:value={$watchForm.type} />
+								<input type="hidden" name="mediaId" bind:value={$watchForm.mediaId} />
 								<button>
 									<Eye class={cn("sm:w-10 sm:h-10", { "invert": isWatched })} fill="black" />
 								</button>
+							</form>
+							<form method="POST" action="/?/rate" use:rateFormEnhance>
+								<input type="hidden" name="mediaId" bind:value={$rateForm.mediaId} />
+								<StarRating initialRating={$rateForm.rating} />
 							</form>
 						{/if}
 					</div>

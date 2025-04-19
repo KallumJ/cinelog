@@ -5,7 +5,8 @@ import { watchFormSchema } from '$lib/forms/watchForm';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import type { Provider, SupabaseClient } from '@supabase/supabase-js';
-import { getOrCreateMedia, getWatchForMediaIfToday } from '$lib/supabase';
+import { getWatchForMediaIfToday } from '$lib/supabase';
+import { ratingFormSchema } from '../lib/forms/ratingForm.js';
 
 export interface HomePageProps {
 	movies: MoviesPlayingNow;
@@ -38,12 +39,10 @@ export const actions: Actions = {
 			return fail(401, { form });
 		}
 
-		const { tmdbId, type } = form.data;
-
-		const media = await getOrCreateMedia(tmdbId, type, supabase);
+		const { mediaId } = form.data;
 
 		const { data: alreadyWatchedToday, error: alreadyWatchedError } = await getWatchForMediaIfToday(
-			media.id,
+			mediaId,
 			session.user.id,
 			supabase
 		);
@@ -55,7 +54,33 @@ export const actions: Actions = {
 		if (alreadyWatchedToday) {
 			await supabase.from('watch').delete().eq('id', alreadyWatchedToday.id);
 		} else {
-			await supabase.from('watch').insert({ mediaId: media.id, userId: session.user.id });
+			await supabase.from('watch').insert({ mediaId: mediaId, userId: session.user.id });
+		}
+
+		return message(form, 'Form posted successfully');
+	},
+	rate: async ({ request, locals: { supabase, session } }) => {
+		const form = await superValidate(request, zod(ratingFormSchema));
+
+		if (!form.valid) {
+			return fail(400, { form });
+		}
+
+		if (!session) {
+			return fail(401, { form });
+		}
+
+		const { mediaId, rating } = form.data;
+
+		const { error } = await supabase.from("rating").upsert({
+			mediaId,
+			rating,
+			userId: session.user.id	
+		}, { onConflict: "userId, mediaId" })
+
+		if (error) {
+			console.error(error)
+			return fail(500, { form });
 		}
 
 		return message(form, 'Form posted successfully');

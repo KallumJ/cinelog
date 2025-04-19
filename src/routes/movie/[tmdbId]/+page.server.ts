@@ -12,8 +12,9 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { watchFormSchema } from '$lib/forms/watchForm';
 import { MediaType } from '$lib/tmdb/types';
 import { getOrCreateMedia, getWatchForMediaIfToday } from '$lib/supabase';
+import { ratingFormSchema } from '$lib/forms/ratingForm';
 
-export async function load({ params: { tmdbId }, setHeaders, locals: { supabase, session } }): Promise<MediaPageProps> {
+export async function load({ params: { tmdbId }, locals: { supabase, session } }): Promise<MediaPageProps> {
 	const movieInformation = await tmdb.movies.details(+tmdbId);
 	const credits = await tmdb.movies.credits(+tmdbId);
 	const watchProviders = await tmdb.movies.watchProviders(+tmdbId);
@@ -24,25 +25,25 @@ export async function load({ params: { tmdbId }, setHeaders, locals: { supabase,
 
 	const media = parseMediaSingle(movieInformation);
 
-	setHeaders({
-		'cache-control': 'private, max-age=3600'
-	});
-
-	const watchForm = await superValidate({ tmdbId: media.tmdbId, type: MediaType.Movie }, zod(watchFormSchema));
-
-	let controls = {
-		watched: false
-	}
-
+	let mediaId: number | undefined = undefined;
+	let isWatched = false;
+	let rating = 0;
+	
 	if (session) {
 		const mediaRecord = await getOrCreateMedia(+tmdbId, MediaType.Movie, supabase)
 
-		const { data } = await getWatchForMediaIfToday(mediaRecord.id, session.user.id, supabase);
+		mediaId = mediaRecord.id
 
-		controls = { ...controls, watched: !!data }
+		const { data: recentWatch } = await getWatchForMediaIfToday(mediaId, session.user.id, supabase);
+		isWatched = !!recentWatch;
+
+		const { data: ratingRecord } = await supabase.from("rating").select("*").match({ mediaId, userId: session.user.id }).maybeSingle()
+		rating = ratingRecord?.rating ?? 0
 	}
-	
+	const watchForm = await superValidate({ mediaId }, zod(watchFormSchema));
 
+	const rateForm = await superValidate({ mediaId, rating }, zod(ratingFormSchema))
+	
 	return {
 		media,
 		credits: {
@@ -51,8 +52,12 @@ export async function load({ params: { tmdbId }, setHeaders, locals: { supabase,
 			cast: credits.cast.map(convertCastToCredit)
 		},
 		watchProviders: convertWatchLocaleToWatchProviderRegion(watchProviders.results),
-		watchForm,
-		controls,
+		controls: {
+			mediaId,
+			watchForm,
+			rateForm,
+			isWatched
+		},
 		session
 	};
 }
