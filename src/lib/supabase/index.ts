@@ -1,6 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../database.types';
 import type { MediaType } from '../tmdb/types';
+import type { Session,  } from "@supabase/supabase-js";
+import { superValidate } from "sveltekit-superforms";
+import { zod } from "sveltekit-superforms/adapters";
+import { watchFormSchema } from '../forms/watchForm';
+import { ratingFormSchema } from '../forms/ratingForm';
+
 
 export async function getOrCreateMedia(
 	tmdbId: number,
@@ -49,4 +55,32 @@ export async function getWatchForMediaIfToday(
 		.gte('createdAt', startOfDay)
 		.lte('createdAt', endOfDay)
 		.maybeSingle();
+}
+
+export async function populateControls(session: Session | null, tmdbId: number, mediaType: MediaType, supabase: SupabaseClient<Database>) {
+    let mediaId: number | undefined = undefined;
+	let isWatched = false;
+	let rating = 0;
+	
+	if (session) {
+		const mediaRecord = await getOrCreateMedia(tmdbId, mediaType, supabase)
+
+		mediaId = mediaRecord.id
+
+		const { data: recentWatch } = await getWatchForMediaIfToday(mediaId, session.user.id, supabase);
+		isWatched = !!recentWatch;
+
+		const { data: ratingRecord } = await supabase.from("rating").select("*").match({ mediaId, userId: session.user.id }).maybeSingle()
+		rating = ratingRecord?.rating ?? 0
+	}
+	const watchForm = await superValidate({ mediaId }, zod(watchFormSchema));
+
+	const rateForm = await superValidate({ mediaId, rating }, zod(ratingFormSchema))
+
+    return {
+        mediaId,
+        watchForm,
+        rateForm,
+        isWatched
+    }
 }
