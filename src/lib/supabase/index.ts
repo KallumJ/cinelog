@@ -148,8 +148,8 @@ export async function getListsForUser(supabase: SupabaseClient<Database>, sessio
 
 		const topEntries = [];
 		for (const entry of entriesData.slice(0, 9) ?? []) {
-			const { title, posterPath } = await getMediaInfoForId(entry.mediaId, supabase);
-			topEntries.push({ title, poster: posterPath });
+			const { title, posterPath, type, tmdbId } = await getMediaInfoForId(entry.mediaId, supabase);
+			topEntries.push({ title, posterPath, type, tmdbId  });
 		}
 
 		lists.push({ id, name, topEntries, allMedia: entriesData.map(x => x.mediaId) });

@@ -9,7 +9,10 @@
 	import type { List } from '$lib/supabase/types';
 	import { superForm } from 'sveltekit-superforms';
 	import * as Alert from '$lib/components/ui/alert';
-	import CircleAlert from "@lucide/svelte/icons/circle-alert";
+	import CircleAlert from '@lucide/svelte/icons/circle-alert';
+	import MediaPoster from '$lib/components/media/MediaPoster.svelte';
+	import { getSrcForPath } from '$lib/tmdb/utils';
+	import { PosterSize } from 'tmdb-ts';
 
 	interface ListsPageProps {
 		lists: List[];
@@ -34,7 +37,7 @@
 			</span>
 		{:else}
 			{#if $errors.listName}
-				<Alert.Root class="space-x-2 mb-4">
+				<Alert.Root class="mb-4 space-x-2">
 					<CircleAlert />
 					<Alert.Title>Error</Alert.Title>
 					<Alert.Description>
@@ -52,18 +55,31 @@
 
 	<ScrollArea>
 		{#if lists.length > 0}
-			{#each lists as { name, topEntries }}
-				<Card.Root>
+			{#each lists as { id, name, topEntries }}
+				<Card.Root class="mb-8">
 					<Card.Header>
-						<Card.Title>{name}</Card.Title>
+						<Card.Title
+							><a class="cursor-pointer hover:underline" href={`/lists/${id}`}>{name}</a
+							></Card.Title
+						>
 					</Card.Header>
 					<Card.Content>
 						{#if topEntries.length === 0}
-							<p class="text-muted-foreground">No content yet!</p>
+							<p class="text-muted-foreground">No content yet! 😢</p>
 						{:else}
-							{#each topEntries as { title, poster }}
-								<p>{title}</p>
-							{/each}
+							<ScrollArea orientation="horizontal">
+								<span class="flex gap-4">
+									{#each topEntries as { title, posterPath, type, tmdbId }}
+										<MediaPoster
+											class="w-32"
+											posterPath={getSrcForPath(posterPath, PosterSize.W500)}
+											{type}
+											{title}
+											{tmdbId}
+										></MediaPoster>
+									{/each}
+								</span>
+							</ScrollArea>
 						{/if}
 					</Card.Content>
 				</Card.Root>
