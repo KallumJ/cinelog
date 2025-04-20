@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { SuperValidated } from 'sveltekit-superforms';
 import { z } from 'zod';
+import type { SuperForm } from './types.js';
 
 export const ratingFormSchema = z.object({
 	mediaId: z.number().min(0),
@@ -9,4 +8,4 @@ export const ratingFormSchema = z.object({
 
 export type RatingFormSchema = z.infer<typeof ratingFormSchema>;
 
-export type RatingSuperForm = SuperValidated<RatingFormSchema, any, RatingFormSchema>;
+export type RatingSuperForm = SuperForm<RatingFormSchema>;

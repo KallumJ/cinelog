@@ -1,11 +1,13 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../database.types';
-import type { MediaType } from '../tmdb/types';
+import { MediaType, type Media } from '../tmdb/types';
 import type { Session,  } from "@supabase/supabase-js";
 import { superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import { watchFormSchema } from '../forms/watchForm';
 import { ratingFormSchema } from '../forms/ratingForm';
+import { parseMediaSingle } from '../tmdb/utils';
+import { tmdb } from '../tmdb/tmdb';
 
 
 export async function getOrCreateMedia(
@@ -82,5 +84,21 @@ export async function populateControls(session: Session | null, tmdbId: number, 
         watchForm,
         rateForm,
         isWatched
+    }
+}
+
+export async function getMediaInfoForId(id: number, supabase: SupabaseClient<Database>): Promise<Media> {
+	const { data: mediaData, error: mediaError } = await supabase.from("media").select("*").match({ id }).single()
+            
+	if (mediaError || !mediaData) {
+		throw new Error("Failed to find media in the database for the given id")
+	}
+
+	if (mediaData.type === MediaType.Movie) {
+        const details = await tmdb.movies.details(mediaData.tmdbId);
+        return parseMediaSingle(details)
+    } else {
+        const details = await tmdb.tvShows.details(mediaData.tmdbId);
+        return parseMediaSingle(details);
     }
 }

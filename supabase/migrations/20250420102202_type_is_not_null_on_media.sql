@@ -1,0 +1,1 @@
+ALTER TABLE public.media ALTER COLUMN "type" SET NOT NULL;

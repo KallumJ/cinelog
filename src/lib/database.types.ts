@@ -64,17 +64,17 @@ export type Database = {
         Row: {
           id: number
           listId: number | null
-          mediaId: number | null
+          mediaId: number
         }
         Insert: {
           id?: number
           listId?: number | null
-          mediaId?: number | null
+          mediaId: number
         }
         Update: {
           id?: number
           listId?: number | null
-          mediaId?: number | null
+          mediaId?: number
         }
         Relationships: [
           {
@@ -96,18 +96,18 @@ export type Database = {
       media: {
         Row: {
           id: number
-          tmdbId: number | null
-          type: Database["public"]["Enums"]["mediatype"] | null
+          tmdbId: number
+          type: Database["public"]["Enums"]["mediatype"]
         }
         Insert: {
           id?: number
-          tmdbId?: number | null
-          type?: Database["public"]["Enums"]["mediatype"] | null
+          tmdbId: number
+          type: Database["public"]["Enums"]["mediatype"]
         }
         Update: {
           id?: number
-          tmdbId?: number | null
-          type?: Database["public"]["Enums"]["mediatype"] | null
+          tmdbId?: number
+          type?: Database["public"]["Enums"]["mediatype"]
         }
         Relationships: []
       }

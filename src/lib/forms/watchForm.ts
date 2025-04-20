@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { SuperValidated } from 'sveltekit-superforms';
 import { z } from 'zod';
+import type { SuperForm } from './types.js';
 
 export const watchFormSchema = z.object({
 	mediaId: z.number().min(0),
@@ -8,4 +7,4 @@ export const watchFormSchema = z.object({
 
 export type WatchFormSchema = z.infer<typeof watchFormSchema>;
 
-export type WatchSuperForm = SuperValidated<WatchFormSchema, any, WatchFormSchema>;
+export type WatchSuperForm = SuperForm<WatchFormSchema>;
