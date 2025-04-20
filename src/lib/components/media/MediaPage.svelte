@@ -17,6 +17,7 @@
 	import * as Popover from '$lib/components/ui/popover';
 	import Button from '../ui/button/button.svelte';
 	import Plus from '@lucide/svelte/icons/plus';
+	import Check from '@lucide/svelte/icons/check';
 	import ScrollArea from '../ui/scroll-area/scroll-area.svelte';
 	import type { List } from '$lib/supabase/types';
 	import type { SubmitMediaToListSuperForm } from '$lib/forms/submitMediaToListForm';
@@ -26,7 +27,7 @@
 		isWatched: boolean;
 		watchForm: WatchSuperForm;
 		rateForm: RatingSuperForm;
-		submitMediaToListForm: SubmitMediaToListSuperForm
+		submitMediaToListForm: SubmitMediaToListSuperForm;
 	}
 
 	export interface MediaPageProps {
@@ -71,6 +72,10 @@
 	const onToggleWatched = () => {
 		isWatched = !isWatched;
 	};
+
+	let mediaInLists = $derived(
+		lists.filter((l) => l.allMedia.includes($watchForm.mediaId)).map((l) => l.id)
+	);
 </script>
 
 <div>
@@ -108,21 +113,24 @@
 									<Button size="icon"><Plus /></Button>
 								</Popover.Trigger>
 								<Popover.Content>
+									<h1 class="mb-2 font-bold text-muted-foreground">Add or remove from list:</h1>
 									<ScrollArea>
-										{#if lists.length === 0}
-											<p>You do not have any lists yet! Head to /lists to create them!</p>
-										{:else}
-											<form method="POST" action="/lists/?/submit" use:addMediaFormEnhance>
-												<ul>
-													<h1 class="mx-4 font-bold text-muted-foreground">Add to:</h1>
-													{#each lists as { name, id, allMedia }}
-														<li>
+										<form
+											method="POST"
+											action="/lists/?/submit"
+											use:addMediaFormEnhance
+											class="flex flex-col"
+										>
+											<ul>
+												{#each lists as { name, id }}
+													<li class="flex items-center gap-2">
+														<span>
 															<input
 																type="radio"
-																name="listId"
-																value={id}
 																id={id.toString()}
-																class="text-lg font-semibold"
+																value={id}
+																name="listId"
+																class="hidden appearance-none"
 																onchange={(event) => {
 																	// event.target is the radio input
 																	// event.target.form is the form element it belongs to
@@ -133,20 +141,29 @@
 																		event.target.form.requestSubmit();
 																	}
 																}}
+																onclick={() => {
+																	if (mediaInLists.includes(id)) {
+																		mediaInLists = mediaInLists.filter((l) => l != id);
+																	} else {
+																		mediaInLists = [...mediaInLists, id];
+																	}
+																}}
 															/>
 															<label
-																class={cn({
-																	'font-bold italic': allMedia.includes($watchForm.mediaId)
+																class={cn('cursor-pointer hover:underline', {
+																	'font-bold': mediaInLists.includes(id)
 																})}
 																for={id.toString()}>{name}</label
 															>
-														</li>
-													{/each}
-												</ul>
-												<input type="hidden" value={$watchForm.mediaId} name="mediaId" />
-											</form>
-										{/if}
+														</span>
+														{#if mediaInLists.includes(id)}<Check size={16} class="mt-1" />{/if}
+													</li>
+												{/each}
+											</ul>
+											<input type="hidden" value={$watchForm.mediaId} name="mediaId" />
+										</form>
 									</ScrollArea>
+									<Button variant="link" href="/lists" class="p-0">Go to all lists...</Button>
 								</Popover.Content>
 							</Popover.Root>
 						{/if}
