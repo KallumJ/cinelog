@@ -14,6 +14,12 @@
 	import type { Session } from '@supabase/supabase-js';
 	import StarRating from '../ui/rating/StarRating.svelte';
 	import type { RatingSuperForm } from '$lib/forms/ratingForm';
+	import * as Popover from '$lib/components/ui/popover';
+	import Button from '../ui/button/button.svelte';
+	import Plus from '@lucide/svelte/icons/plus';
+	import ScrollArea from '../ui/scroll-area/scroll-area.svelte';
+	import type { List } from '$lib/supabase/types';
+	import type { AddMediaToListSuperForm } from '$lib/forms/addMediaToListForm';
 
 	export interface MediaPageProps {
 		media: Media;
@@ -23,13 +29,15 @@
 			mediaId?: number;
 			isWatched: boolean;
 			watchForm: WatchSuperForm;
-			rateForm: RatingSuperForm
-		},
-		session: Session | null
+			rateForm: RatingSuperForm;
+			addMediaToListForm: AddMediaToListSuperForm;
+		};
+		session: Session | null;
+		lists: List[];
 	}
 
 	const data: MediaPageProps = $props();
-	const { media, credits, watchProviders, controls, session } = data;
+	const { media, credits, watchProviders, controls, session, lists } = data;
 
 	const {
 		posterPath,
@@ -48,16 +56,19 @@
 
 	const { createdBy, cast, crew } = credits;
 
+	const { form: watchForm, enhance: watchFormEnhance } = superForm(controls.watchForm);
 
-	const { form: watchForm, enhance: watchFormEnhance } = superForm(controls.watchForm)
+	const { form: rateForm, enhance: rateFormEnhance } = superForm(controls.rateForm);
 
-	const { form: rateForm, enhance: rateFormEnhance } = superForm(controls.rateForm)
+	const { form: addMediaToListForm, enhance: addMediaFormEnhance } = superForm(
+		controls.addMediaToListForm
+	);
 
-	let isWatched = $state(controls.isWatched)
+	let isWatched = $state(controls.isWatched);
 
 	const onToggleWatched = () => {
-		isWatched = !isWatched
-	}
+		isWatched = !isWatched;
+	};
 </script>
 
 <div>
@@ -83,13 +94,51 @@
 							<form method="POST" action="/?/watch" use:watchFormEnhance onsubmit={onToggleWatched}>
 								<input type="hidden" name="mediaId" bind:value={$watchForm.mediaId} />
 								<button>
-									<Eye class={cn("sm:w-10 sm:h-10", { "invert": isWatched })} fill="black" />
+									<Eye class={cn('sm:h-10 sm:w-10', { invert: isWatched })} fill="black" />
 								</button>
 							</form>
 							<form method="POST" action="/?/rate" use:rateFormEnhance>
 								<input type="hidden" name="mediaId" bind:value={$rateForm.mediaId} />
 								<StarRating initialRating={$rateForm.rating} />
 							</form>
+							<Popover.Root>
+								<Popover.Trigger>
+									<Button size="icon"><Plus /></Button>
+								</Popover.Trigger>
+								<Popover.Content>
+									<ScrollArea>
+										{#if lists.length === 0}
+											<p>You do not have any lists yet! Head to /lists to create them!</p>
+										{:else}
+											<form method="POST" action="/lists/?/addMedia" use:addMediaFormEnhance>
+												<ul>
+													<h1 class="mx-4 font-bold text-muted-foreground">Add to:</h1>
+													{#each lists as { name, id }}
+														<li>
+															<input
+																type="radio"
+																name="listId"
+																value={id}
+																id={id.toString()}
+																class="text-lg font-semibold"
+																onchange={(event) => {
+																	// event.target is the radio input
+																	// event.target.form is the form element it belongs to
+																	if (event.target instanceof HTMLInputElement && event.target.form) {
+																		event.target.form.requestSubmit();
+																	}
+																}}
+															/>
+															<label for={id.toString()}>{name}</label>
+														</li>
+													{/each}
+												</ul>
+												<input type="hidden" value={$watchForm.mediaId} name="mediaId">
+											</form>
+										{/if}
+									</ScrollArea>
+								</Popover.Content>
+							</Popover.Root>
 						{/if}
 					</div>
 					<span class="flex items-center gap-2 sm:items-end sm:gap-4">

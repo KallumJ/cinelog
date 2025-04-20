@@ -1,0 +1,1 @@
+ALTER TABLE public.list ALTER COLUMN "name" SET NOT NULL;

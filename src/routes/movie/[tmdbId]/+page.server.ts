@@ -7,7 +7,7 @@ import {
 } from '$lib/tmdb/utils';
 import type { MediaPageProps } from '$lib/components/media/MediaPage.svelte';
 import { partition } from '$lib/utils';
-import { populateControls } from '$lib/supabase';
+import { getListsForUser, populateControls } from '$lib/supabase';
 import { MediaType } from '$lib/tmdb/types';
 
 export async function load({ params: { tmdbId }, locals: { supabase, session } }): Promise<MediaPageProps> {
@@ -23,6 +23,8 @@ export async function load({ params: { tmdbId }, locals: { supabase, session } }
 
 	const controls = await populateControls(session, +tmdbId, MediaType.Movie, supabase)
 	
+	const lists = session ? await getListsForUser(supabase, session) : []
+
 	return {
 		media,
 		credits: {
@@ -32,6 +34,7 @@ export async function load({ params: { tmdbId }, locals: { supabase, session } }
 		},
 		watchProviders: convertWatchLocaleToWatchProviderRegion(watchProviders.results),
 		controls,
-		session
+		session,
+		lists
 	};
 }

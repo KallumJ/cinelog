@@ -1,7 +1,8 @@
 export interface List {
-    name: string | null;
+    id: number;
+    name: string;
     topEntries: {
         title: string;
-        poster: string | undefined;
+        poster: string;
     }[]
 }

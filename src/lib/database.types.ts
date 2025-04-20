@@ -37,17 +37,17 @@ export type Database = {
       list: {
         Row: {
           id: number
-          name: string | null
+          name: string
           userId: string | null
         }
         Insert: {
           id?: number
-          name?: string | null
+          name: string
           userId?: string | null
         }
         Update: {
           id?: number
-          name?: string | null
+          name?: string
           userId?: string | null
         }
         Relationships: [

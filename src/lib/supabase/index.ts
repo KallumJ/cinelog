@@ -1,14 +1,15 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../database.types';
 import { MediaType, type Media } from '../tmdb/types';
-import type { Session,  } from "@supabase/supabase-js";
-import { superValidate } from "sveltekit-superforms";
-import { zod } from "sveltekit-superforms/adapters";
+import type { Session } from '@supabase/supabase-js';
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
 import { watchFormSchema } from '../forms/watchForm';
 import { ratingFormSchema } from '../forms/ratingForm';
 import { parseMediaSingle } from '../tmdb/utils';
 import { tmdb } from '../tmdb/tmdb';
-
+import type { List } from './types.js';
+import { addMediaToListSchema } from '../forms/addMediaToListForm.js';
 
 export async function getOrCreateMedia(
 	tmdbId: number,
@@ -59,46 +60,99 @@ export async function getWatchForMediaIfToday(
 		.maybeSingle();
 }
 
-export async function populateControls(session: Session | null, tmdbId: number, mediaType: MediaType, supabase: SupabaseClient<Database>) {
-    let mediaId: number | undefined = undefined;
+export async function populateControls(
+	session: Session | null,
+	tmdbId: number,
+	mediaType: MediaType,
+	supabase: SupabaseClient<Database>
+) {
+	let mediaId: number | undefined = undefined;
 	let isWatched = false;
 	let rating = 0;
-	
-	if (session) {
-		const mediaRecord = await getOrCreateMedia(tmdbId, mediaType, supabase)
 
-		mediaId = mediaRecord.id
+	if (session) {
+		const mediaRecord = await getOrCreateMedia(tmdbId, mediaType, supabase);
+
+		mediaId = mediaRecord.id;
 
 		const { data: recentWatch } = await getWatchForMediaIfToday(mediaId, session.user.id, supabase);
 		isWatched = !!recentWatch;
 
-		const { data: ratingRecord } = await supabase.from("rating").select("*").match({ mediaId, userId: session.user.id }).maybeSingle()
-		rating = ratingRecord?.rating ?? 0
+		const { data: ratingRecord } = await supabase
+			.from('rating')
+			.select('*')
+			.match({ mediaId, userId: session.user.id })
+			.maybeSingle();
+		rating = ratingRecord?.rating ?? 0;
 	}
 	const watchForm = await superValidate({ mediaId }, zod(watchFormSchema));
 
-	const rateForm = await superValidate({ mediaId, rating }, zod(ratingFormSchema))
+	const rateForm = await superValidate({ mediaId, rating }, zod(ratingFormSchema));
 
-    return {
-        mediaId,
-        watchForm,
-        rateForm,
-        isWatched
-    }
+	const addMediaToListForm = await superValidate(zod(addMediaToListSchema))
+
+	return {
+		mediaId,
+		watchForm,
+		rateForm,
+		addMediaToListForm,
+		isWatched
+	};
 }
 
-export async function getMediaInfoForId(id: number, supabase: SupabaseClient<Database>): Promise<Media> {
-	const { data: mediaData, error: mediaError } = await supabase.from("media").select("*").match({ id }).single()
-            
+export async function getMediaInfoForId(
+	id: number,
+	supabase: SupabaseClient<Database>
+): Promise<Media> {
+	const { data: mediaData, error: mediaError } = await supabase
+		.from('media')
+		.select('*')
+		.match({ id })
+		.single();
+
 	if (mediaError || !mediaData) {
-		throw new Error("Failed to find media in the database for the given id")
+		throw new Error('Failed to find media in the database for the given id');
 	}
 
 	if (mediaData.type === MediaType.Movie) {
-        const details = await tmdb.movies.details(mediaData.tmdbId);
-        return parseMediaSingle(details)
-    } else {
-        const details = await tmdb.tvShows.details(mediaData.tmdbId);
-        return parseMediaSingle(details);
-    }
+		const details = await tmdb.movies.details(mediaData.tmdbId);
+		return parseMediaSingle(details);
+	} else {
+		const details = await tmdb.tvShows.details(mediaData.tmdbId);
+		return parseMediaSingle(details);
+	}
+}
+
+export async function getListsForUser(supabase: SupabaseClient<Database>, session: Session) {
+	const { data: getListsData, error: getListsError } = await supabase
+		.from('list')
+		.select('*')
+		.match({ userId: session.user.id });
+
+	if (getListsError) {
+		throw new Error("Failed to get lists for currently signed in user")
+	}
+
+	const lists: List[] = [];
+	for (const { id, name } of getListsData) {
+		const { data: entriesData, error: entriesError } = await supabase
+			.from('listentry')
+			.select('*')
+			.match({ listId: id })
+			.limit(10);
+
+		if (entriesError) {
+			throw new Error("Failed to list entries for currently signed in user")
+		}
+
+		const topEntries = [];
+		for (const entry of entriesData ?? []) {
+			const { title, posterPath } = await getMediaInfoForId(entry.mediaId, supabase);
+			topEntries.push({ title, poster: posterPath });
+		}
+
+		lists.push({ id, name, topEntries });
+	}
+
+	return lists;
 }
