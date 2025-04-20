@@ -4,5 +4,6 @@ export interface List {
     topEntries: {
         title: string;
         poster: string;
-    }[]
+    }[],
+    allMedia: number[]
 }

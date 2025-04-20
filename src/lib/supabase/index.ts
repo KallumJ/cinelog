@@ -9,7 +9,8 @@ import { ratingFormSchema } from '../forms/ratingForm';
 import { parseMediaSingle } from '../tmdb/utils';
 import { tmdb } from '../tmdb/tmdb';
 import type { List } from './types.js';
-import { addMediaToListSchema } from '../forms/addMediaToListForm.js';
+import { submitMediaToListSchema } from '../forms/submitMediaToListForm.js';
+import type { MediaPageControls } from '../components/media/MediaPage.svelte';
 
 export async function getOrCreateMedia(
 	tmdbId: number,
@@ -65,7 +66,7 @@ export async function populateControls(
 	tmdbId: number,
 	mediaType: MediaType,
 	supabase: SupabaseClient<Database>
-) {
+): Promise<MediaPageControls> {
 	let mediaId: number | undefined = undefined;
 	let isWatched = false;
 	let rating = 0;
@@ -89,13 +90,13 @@ export async function populateControls(
 
 	const rateForm = await superValidate({ mediaId, rating }, zod(ratingFormSchema));
 
-	const addMediaToListForm = await superValidate(zod(addMediaToListSchema))
+	const submitMediaToListForm = await superValidate(zod(submitMediaToListSchema))
 
 	return {
 		mediaId,
 		watchForm,
 		rateForm,
-		addMediaToListForm,
+		submitMediaToListForm,
 		isWatched
 	};
 }
@@ -139,19 +140,19 @@ export async function getListsForUser(supabase: SupabaseClient<Database>, sessio
 			.from('listentry')
 			.select('*')
 			.match({ listId: id })
-			.limit(10);
+			
 
 		if (entriesError) {
 			throw new Error("Failed to list entries for currently signed in user")
 		}
 
 		const topEntries = [];
-		for (const entry of entriesData ?? []) {
+		for (const entry of entriesData.slice(0, 9) ?? []) {
 			const { title, posterPath } = await getMediaInfoForId(entry.mediaId, supabase);
 			topEntries.push({ title, poster: posterPath });
 		}
 
-		lists.push({ id, name, topEntries });
+		lists.push({ id, name, topEntries, allMedia: entriesData.map(x => x.mediaId) });
 	}
 
 	return lists;

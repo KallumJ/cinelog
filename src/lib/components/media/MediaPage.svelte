@@ -19,19 +19,21 @@
 	import Plus from '@lucide/svelte/icons/plus';
 	import ScrollArea from '../ui/scroll-area/scroll-area.svelte';
 	import type { List } from '$lib/supabase/types';
-	import type { AddMediaToListSuperForm } from '$lib/forms/addMediaToListForm';
+	import type { SubmitMediaToListSuperForm } from '$lib/forms/submitMediaToListForm';
+
+	export interface MediaPageControls {
+		mediaId?: number;
+		isWatched: boolean;
+		watchForm: WatchSuperForm;
+		rateForm: RatingSuperForm;
+		submitMediaToListForm: SubmitMediaToListSuperForm
+	}
 
 	export interface MediaPageProps {
 		media: Media;
 		credits: Credits;
 		watchProviders: WatchProviderRegion[];
-		controls: {
-			mediaId?: number;
-			isWatched: boolean;
-			watchForm: WatchSuperForm;
-			rateForm: RatingSuperForm;
-			addMediaToListForm: AddMediaToListSuperForm;
-		};
+		controls: MediaPageControls;
 		session: Session | null;
 		lists: List[];
 	}
@@ -61,7 +63,7 @@
 	const { form: rateForm, enhance: rateFormEnhance } = superForm(controls.rateForm);
 
 	const { form: addMediaToListForm, enhance: addMediaFormEnhance } = superForm(
-		controls.addMediaToListForm
+		controls.submitMediaToListForm
 	);
 
 	let isWatched = $state(controls.isWatched);
@@ -110,10 +112,10 @@
 										{#if lists.length === 0}
 											<p>You do not have any lists yet! Head to /lists to create them!</p>
 										{:else}
-											<form method="POST" action="/lists/?/addMedia" use:addMediaFormEnhance>
+											<form method="POST" action="/lists/?/submit" use:addMediaFormEnhance>
 												<ul>
 													<h1 class="mx-4 font-bold text-muted-foreground">Add to:</h1>
-													{#each lists as { name, id }}
+													{#each lists as { name, id, allMedia }}
 														<li>
 															<input
 																type="radio"
@@ -124,16 +126,24 @@
 																onchange={(event) => {
 																	// event.target is the radio input
 																	// event.target.form is the form element it belongs to
-																	if (event.target instanceof HTMLInputElement && event.target.form) {
+																	if (
+																		event.target instanceof HTMLInputElement &&
+																		event.target.form
+																	) {
 																		event.target.form.requestSubmit();
 																	}
 																}}
 															/>
-															<label for={id.toString()}>{name}</label>
+															<label
+																class={cn({
+																	'font-bold italic': allMedia.includes($watchForm.mediaId)
+																})}
+																for={id.toString()}>{name}</label
+															>
 														</li>
 													{/each}
 												</ul>
-												<input type="hidden" value={$watchForm.mediaId} name="mediaId">
+												<input type="hidden" value={$watchForm.mediaId} name="mediaId" />
 											</form>
 										{/if}
 									</ScrollArea>
