@@ -21,6 +21,7 @@
 	import ScrollArea from '../ui/scroll-area/scroll-area.svelte';
 	import type { List } from '$lib/supabase/types';
 	import type { SubmitMediaToListSuperForm } from '$lib/forms/submitMediaToListForm';
+	import { Badge } from "$lib/components/ui/badge/";
 
 	export interface MediaPageControls {
 		mediaId?: number;
@@ -54,7 +55,8 @@
 		description,
 		otherInformation,
 		productionCompanies,
-		aggregateRating
+		aggregateRating,
+		genres
 	} = media;
 
 	const { createdBy, cast, crew } = credits;
@@ -185,8 +187,14 @@
 	<Card.Root class="my-4 p-4">
 		<div class="sm:flex">
 			<div>
-				<p class="text-xl italic">{tagline}</p>
-				<p class="my-4 text-lg">{description}</p>
+				<span>
+					<p class="text-xl italic">{tagline}</p>
+					{#each genres as { name }}
+						<Badge class="mr-1 mt-3" variant="secondary">{name}</Badge>
+					{/each}
+				</span>
+
+				<p class="my-3 text-lg">{description}</p>
 			</div>
 			<div class="mb-8 ml-auto">
 				<div>

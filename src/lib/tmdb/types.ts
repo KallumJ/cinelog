@@ -1,4 +1,4 @@
-import type { ProductionCompany } from "tmdb-ts";
+import type { Genre, ProductionCompany } from "tmdb-ts";
 
 export interface Media {
     posterPath: string;
@@ -18,6 +18,7 @@ export interface Media {
         value: string;
     }[],
     productionCompanies: ProductionCompany[]
+    genres: Genre[]
 }
 
 export type Credits = {

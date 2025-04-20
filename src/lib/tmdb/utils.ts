@@ -51,6 +51,7 @@ const convertMovie = (m: MovieDetails): Media => ({
         }
     ],
     productionCompanies: m.production_companies,
+    genres: m.genres
 });
 
 // Helper function to convert a single TV show to Media
@@ -79,6 +80,7 @@ const convertTV = (t: TvShowDetails): Media => ({
         }
     ],
     productionCompanies: t.production_companies,
+    genres: t.genres
 });
 
 export function parseMediaArray(data: unknown): Media[] {
