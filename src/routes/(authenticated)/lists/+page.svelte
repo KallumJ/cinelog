@@ -7,6 +7,9 @@
 	import type { CreateListSuperForm } from '$lib/forms/createListForm';
 	import * as Card from '$lib/components/ui/card';
 	import type { List } from '$lib/supabase/types';
+	import { superForm } from 'sveltekit-superforms';
+	import * as Alert from '$lib/components/ui/alert';
+	import CircleAlert from "@lucide/svelte/icons/circle-alert";
 
 	interface ListsPageProps {
 		lists: List[];
@@ -17,17 +20,28 @@
 
 	const { lists } = data;
 
+	const { errors } = superForm(data.createForm);
+
 	let creatingList = $state(false);
 </script>
 
 <div class="lg:mx-32">
-	<form method="POST" action="?/create">
+	<form method="POST" action="?/create" class="mb-6">
 		{#if creatingList}
 			<span class="flex items-center gap-2">
 				<Input name="listName" placeholder="Name of list..." aria-placeholder="Name of list..." />
 				<Button type="submit">Create</Button>
 			</span>
 		{:else}
+			{#if $errors.listName}
+				<Alert.Root class="space-x-2 mb-4">
+					<CircleAlert />
+					<Alert.Title>Error</Alert.Title>
+					<Alert.Description>
+						{$errors.listName}
+					</Alert.Description>
+				</Alert.Root>
+			{/if}
 			<span class="flex w-full max-w-md items-center space-x-2">
 				<Button class="mr-4" onclick={() => (creatingList = true)}><Plus /> Add a new list</Button>
 				<Input placeholder="Search..." />
@@ -44,7 +58,6 @@
 						<Card.Title>{name}</Card.Title>
 					</Card.Header>
 					<Card.Content>
-
 						{#if topEntries.length === 0}
 							<p class="text-muted-foreground">No content yet!</p>
 						{:else}

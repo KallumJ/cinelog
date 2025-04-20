@@ -7,3 +7,7 @@ export interface List {
     }[],
     allMedia: number[]
 }
+
+export enum SupabaseErrorCodes  {
+    UniqueViolation = "23505"
+}

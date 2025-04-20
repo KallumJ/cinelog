@@ -1,9 +1,10 @@
 import { fail, redirect, type Actions } from '@sveltejs/kit';
-import { message, superValidate } from 'sveltekit-superforms';
+import { message, setError, superValidate } from 'sveltekit-superforms';
 import { createListSchema } from '$lib/forms/createListForm';
 import { zod } from 'sveltekit-superforms/adapters';
 import { getListsForUser } from '$lib/supabase/index';
-import { submitMediaToListSchema } from '../../../lib/forms/submitMediaToListForm.js';
+import { submitMediaToListSchema } from '$lib/forms/submitMediaToListForm';
+import { SupabaseErrorCodes } from '$lib/supabase/types';
 
 export async function load({ locals: { supabase, session } }) {
 	if (!session) redirect(307, '/');
@@ -36,6 +37,9 @@ export const actions = {
         const { error } = await supabase.from("list").insert({ name: listName })
 
         if (error) {
+            if (error.code === SupabaseErrorCodes.UniqueViolation) {
+                return setError(form, "listName", `There is already a list named ${listName}`)
+            }
             return fail(500, { form })
         }
 
