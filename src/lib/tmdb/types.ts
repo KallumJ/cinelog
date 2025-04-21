@@ -63,3 +63,10 @@ export enum MediaType {
     Movie = "movie",
     Tv = "tv"
 }
+
+export interface SearchResultsResponse {
+    media: Media[];
+    currentPage: number;
+    totalPages: number;
+    totalResults: number;
+}
