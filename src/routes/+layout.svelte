@@ -19,7 +19,7 @@
 
 	const metadata = {
 		title: "Cinelog",
-		description: "Track and the media you watch. Your personal media diary.",
+		description: "Track and rate the media you watch. Your personal media diary.",
 		currentUrl: page.url,
 		image: "https://cinelog.andromeda.kallumj.xyz/favicon.png",
 		imageAlt: "Cinelog logo"
