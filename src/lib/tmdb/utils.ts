@@ -3,7 +3,7 @@ import { MediaType, type Credit, type Media, type Provider, type WatchProviderRe
 import { getDateFromString, getFlagEmojiForCountryCode, getYearFromDateString, REGION_NAMES } from '$lib/utils';
 
 export function getSrcForPath(backdrop: string, size: string) {
-    if (backdrop === null) 
+    if (!backdrop) 
             return null;
 
 	return `https://image.tmdb.org/t/p/${size}${backdrop}`;
