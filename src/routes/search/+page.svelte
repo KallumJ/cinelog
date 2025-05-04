@@ -26,7 +26,7 @@
 	}
 </script>
 
-<div class="flex gap-4">
+<div class="sm:flex gap-4">
 	<RadioGroup.Root
 		class="flex gap-4"
 		bind:value={selectedType}
@@ -44,7 +44,7 @@
 			<Label for="tv">📺 TV Shows</Label>
 		</div>
 	</RadioGroup.Root>
-	<span class="flex gap-2">
+	<span class="flex gap-2 mt-4 sm:mt-0">
 		<Input placeholder="Search..." bind:value={query} onkeyup={debounce(handleSearch)} />
 		<Button size="icon" class="w-12"><Search /></Button>
 	</span>
