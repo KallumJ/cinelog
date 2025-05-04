@@ -1,6 +1,6 @@
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 import { tmdb } from "$lib/tmdb/tmdb";
-import { parseMediaArray } from "$lib/tmdb/utils";
+import { parseMediaArray, sortMediaByPopularity } from "$lib/tmdb/utils";
 import type { SearchResultsResponse } from "$lib/tmdb/types";
 
 export const GET: RequestHandler = async ({ url }) => {
@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ url }) => {
     
     const results = await tmdb.search.movies({ query, page: +page })
 
-    const media = parseMediaArray(results.results)
+    const media = parseMediaArray(results.results, sortMediaByPopularity)
 
     const response: SearchResultsResponse = {
         media,

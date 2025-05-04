@@ -51,7 +51,8 @@ const convertMovie = (m: MovieDetails): Media => ({
         }
     ],
     productionCompanies: m.production_companies,
-    genres: m.genres
+    genres: m.genres,
+    popularity: m.popularity
 });
 
 // Helper function to convert a single TV show to Media
@@ -80,17 +81,18 @@ const convertTV = (t: TvShowDetails): Media => ({
         }
     ],
     productionCompanies: t.production_companies,
-    genres: t.genres
+    genres: t.genres,
+    popularity: t.popularity
 });
 
-export function parseMediaArray(data: unknown): Media[] {
+export function parseMediaArray(data: unknown, sortFn?: ((a: Media, b: Media) => number)): Media[] {
     if (!Array.isArray(data)) {
         // Optionally warn if the input wasn't an array
         return [];
     }
 
     // Use reduce for a single pass: filter and map simultaneously
-    return data.reduce<Media[]>((acc, item) => {
+    const media =  data.reduce<Media[]>((acc, item) => {
         if (isMovie(item)) {
             acc.push(convertMovie(item));
         } else if (isTV(item)) {
@@ -99,6 +101,8 @@ export function parseMediaArray(data: unknown): Media[] {
         // Items that are neither Movie nor TV are implicitly skipped
         return acc;
     }, []); // Start with an empty Media array
+
+    return sortFn ? media.sort(sortFn) : media;
 }
 
 
@@ -191,3 +195,5 @@ export const sortWatchProviders = (a: WatchProviderRegion, b: WatchProviderRegio
     // Case 3: Both are preferred OR both are not preferred.
     return a.countryName.toLowerCase().localeCompare(b.countryName.toLowerCase());
 };
+
+export const sortMediaByPopularity = (a: Media, b: Media) => b.popularity - a.popularity

@@ -19,6 +19,7 @@ export interface Media {
     }[],
     productionCompanies: ProductionCompany[]
     genres: Genre[]
+    popularity: number;
 }
 
 export type Credits = {
