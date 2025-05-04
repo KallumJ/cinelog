@@ -11,7 +11,7 @@
 </script>
 
 <div class={cn("overflow-hidden rounded-lg bg-gradient-to-b from-slate-800 to-slate-600 shadow-lg transition-all", className, { "hover:scale-105": clickable,  }, )}>
-	<a href={clickable ? `${type}/${tmdbId}` : undefined} draggable="false" class="select-none">
+	<a href={clickable ? `/${type}/${tmdbId}` : undefined} draggable="false" class="select-none">
 		{#if src === null}
 			<div class="w-full h-full flex justify-center items-center text-shadow-sm">
 				<p class="text-center text-xl sm:text-4xl font-bold w-5/6">{title}</p>
