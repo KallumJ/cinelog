@@ -8,7 +8,7 @@ import { watchFormSchema } from '../forms/watchForm';
 import { ratingFormSchema } from '../forms/ratingForm';
 import { parseMediaSingle } from '../tmdb/utils';
 import { tmdb } from '../tmdb/tmdb';
-import type { List } from './types.js';
+import type { List } from './types';
 import { submitMediaToListSchema } from '../forms/submitMediaToListForm.js';
 import type { MediaPageControls } from '../components/media/MediaPage.svelte';
 
@@ -70,6 +70,7 @@ export async function populateControls(
 	let mediaId: number | undefined = undefined;
 	let isWatched = false;
 	let rating = 0;
+	let lists: List[] = []
 
 	if (session) {
 		const mediaRecord = await getOrCreateMedia(tmdbId, mediaType, supabase);
@@ -85,6 +86,8 @@ export async function populateControls(
 			.match({ mediaId, userId: session.user.id })
 			.maybeSingle();
 		rating = ratingRecord?.rating ?? 0;
+
+		lists = await getListsForUser(supabase, session)
 	}
 	const watchForm = await superValidate({ mediaId }, zod(watchFormSchema));
 
@@ -97,7 +100,8 @@ export async function populateControls(
 		watchForm,
 		rateForm,
 		submitMediaToListForm,
-		isWatched
+		isWatched,
+		lists
 	};
 }
 
