@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from 'clsx';
+import { parse } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -68,3 +69,7 @@ export const debounce = (callback: Function, wait = 300) => {
         timeout = setTimeout(() => callback(...args), wait);
     };
 };
+
+export const getMonthFromStringOrToday = (str: string | null | undefined) => {
+	return str ? parse(str, "MM-yyyy", new Date()) : new Date()
+}
