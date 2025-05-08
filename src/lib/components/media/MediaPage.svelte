@@ -93,12 +93,13 @@
 				<Card.Content class="p-2 sm:p-6">
 					<div class="mb-2 mr-2 flex items-center gap-3 md:gap-6">
 						<div
-							class={cn('w-fit rounded-lg bg-yellow-600 p-2 sm:p-4', {
+							class={cn('w-fit rounded-lg bg-yellow-600 p-2 sm:p-4 sm:px-5', {
 								'bg-green-500': aggregateRating >= 70,
-								'bg-red-500': aggregateRating <= 40
+								'bg-red-500': aggregateRating <= 40,
+								"bg-gray-600": aggregateRating === 0
 							})}
 						>
-							<p class="text-lg font-bold sm:text-2xl">{aggregateRating}</p>
+							<p class="text-lg font-bold sm:text-2xl">{aggregateRating === 0 ? "??" : aggregateRating}</p>
 						</div>
 						{#if session}
 							<form method="POST" action="/?/watch" use:watchFormEnhance onsubmit={onToggleWatched}>
