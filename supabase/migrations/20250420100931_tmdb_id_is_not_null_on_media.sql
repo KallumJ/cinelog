@@ -1,0 +1,1 @@
+ALTER TABLE public.media ALTER COLUMN "tmdbId" SET NOT NULL;

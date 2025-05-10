@@ -1,0 +1,1 @@
+ALTER TABLE public.listentry ALTER COLUMN "mediaId" SET NOT NULL;
