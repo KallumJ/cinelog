@@ -9,11 +9,17 @@
 	import * as Avatar from '$lib/components/ui/avatar/';
 	import { extractInitials } from '$lib/utils';
 
+	interface NavItem {
+		href: string,
+		displayText: string,
+		shouldDisplay: () => boolean
+	}
+
 	const { session }: { session: Session | null } = $props();
 
 	let isOpen = $state(false);
 
-	const navItems = [
+	const navItems: NavItem[] = [
 		{
 			href: "/search",
 			displayText: "Search",
@@ -27,6 +33,11 @@
 		{
 			href: "/attribution",
 			displayText: "Attribution",
+			shouldDisplay: () => true
+		},
+		{
+			href: "/schedule",
+			displayText: "Schedule",
 			shouldDisplay: () => true
 		}
 	];
