@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MediaType, type Credits, type Media, type WatchProviderRegion } from '$lib/tmdb/types';
 	import { getSrcForPath } from '$lib/tmdb/utils';
-	import { BackdropSize, ProfileSize } from 'tmdb-ts';
+	import { BackdropSize, ProfileSize, type Video } from 'tmdb-ts';
 	import MediaPoster from './MediaPoster.svelte';
 	import * as Card from '$lib/components/ui/card';
 	import * as Avatar from '$lib/components/ui/avatar';
@@ -22,6 +22,7 @@
 	import type { List } from '$lib/supabase/types';
 	import type { SubmitMediaToListSuperForm } from '$lib/forms/submitMediaToListForm';
 	import { Badge } from '$lib/components/ui/badge/';
+	import { Youtube } from 'svelte-youtube-lite';
 
 	export interface MediaPageControls {
 		mediaId?: number;
@@ -38,10 +39,11 @@
 		watchProviders: WatchProviderRegion[];
 		controls: MediaPageControls;
 		session: Session | null;
+		trailer: Video | undefined;
 	}
 
 	const data: MediaPageProps = $props();
-	const { media, credits, watchProviders, controls, session } = data;
+	const { media, credits, watchProviders, controls, session, trailer } = data;
 
 	const {
 		posterPath,
@@ -201,6 +203,11 @@
 				</span>
 
 				<p class="my-3 text-lg">{description}</p>
+				{#if trailer}
+					<div class="my-8">
+						<Youtube id={trailer.key} thumbnail="maxresdefault"/>
+					</div>
+				{/if}
 			</div>
 			<div class="mb-8 ml-auto">
 				<div>

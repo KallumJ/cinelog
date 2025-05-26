@@ -12,6 +12,8 @@ import { MediaType } from '$lib/tmdb/types';
 
 export async function load({ params: { tmdbId }, locals: { supabase, session } }): Promise<MediaPageProps> {
 	const movieInformation = await tmdb.movies.details(+tmdbId);
+	const videos = await tmdb.movies.videos(+tmdbId);
+	const trailer = videos.results.filter(v => v.type === "Trailer").shift();
 	const credits = await tmdb.movies.credits(+tmdbId);
 	const watchProviders = await tmdb.movies.watchProviders(+tmdbId);
 
@@ -33,5 +35,6 @@ export async function load({ params: { tmdbId }, locals: { supabase, session } }
 		watchProviders: convertWatchLocaleToWatchProviderRegion(watchProviders.results),
 		controls,
 		session,
+		trailer
 	};
 }
